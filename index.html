@@ -723,12 +723,7 @@
                 setLoading(true);
                 try {
                     const planets = Object.entries(member.western).map(([p, pos]) => `${p}: ${pos.sign} ${pos.degree}`).join(', ');
-                    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'x-api-key': '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', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-                        body: JSON.stringify({
-                            model: 'claude-sonnet-4-20250514', max_tokens: 1500,
-                            messages: [{ role: 'user', content: `Eres un astrólogo experto. Interpreta la carta natal de ${member.name} (nacido ${member.born} en ${member.birthPlace}).
+                    const userPrompt = `Eres un astrólogo experto. Interpreta la carta natal de ${member.name} (nacido ${member.born} en ${member.birthPlace}).
 
 Posiciones: ${planets}
 
@@ -739,11 +734,14 @@ Escribe en español. Da una interpretación profunda pero accesible:
 4. **Dones y Desafíos**: Lo que la carta revela
 5. **Mensaje del Cosmos**: Un consejo basado en su carta
 
-Usa un tono místico pero claro. Máximo 800 palabras.` }]
-                        })
+Usa un tono místico pero claro. Máximo 800 palabras.`;
+                    const resp = await fetch('/api/interpret', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt: userPrompt, max_tokens: 1500 })
                     });
                     const data = await resp.json();
-                    setInterpretation(data.content?.[0]?.text || 'Error en la interpretación.');
+                    setInterpretation(data.error ? ('Error: ' + data.error) : (data.content?.[0]?.text || 'Error en la interpretación.'));
                 } catch(e) { setInterpretation('Error: ' + e.message); }
                 setLoading(false);
             }
@@ -800,14 +798,18 @@ Usa un tono místico pero claro. Máximo 800 palabras.` }]
             async function interpret() {
                 setLoading(true);
                 try {
-                    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+                    const resp = await fetch('/api/interpret', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'x-api-key': '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', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-                        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1500, messages: [{ role: 'user', content: prompt }] })
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt, model: 'claude-sonnet-4-20250514', max_tokens: 1500 })
                     });
                     const data = await resp.json();
-                    setText(data.content?.[0]?.text || 'Error.');
-                } catch(e) { setText('Error: ' + e.message); }
+                    if (data.error) {
+                        setText('Error: ' + data.error);
+                    } else {
+                        setText(data.content?.[0]?.text || 'No se pudo obtener la interpretación.');
+                    }
+                } catch(e) { setText('Error de conexión: ' + e.message); }
                 setLoading(false);
             }
 
@@ -1057,23 +1059,21 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
                 setLoadingPeriod(p);
                 try {
                     const planets = Object.entries(member.western).map(([pl, pos]) => `${pl}: ${pos.sign} ${pos.degree}`).join(', ');
-                    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'x-api-key': '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', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-                        body: JSON.stringify({
-                            model: 'claude-sonnet-4-20250514', max_tokens: 2000,
-                            messages: [{ role: 'user', content: `Eres un astrólogo místico experto. ${periodDescriptions[p]}
+                    const transitPrompt = `Eres un astrólogo místico experto. ${periodDescriptions[p]}
 
 Datos natales: ${member.name}, nacido ${member.born} en ${member.birthPlace}
 Posiciones: ${planets}
 Signo chino: ${member.chinese.fullSign}, Enneagram: ${member.enneagram}, Life Path: ${member.numerology.lifePath}
 Tarot: ${member.tarot}, I Ching: Hex ${member.iChing.hex} ${member.iChing.name}
 
-Escribe en español, con lenguaje poético pero accesible. Usa secciones con títulos claros. Máximo 1000 palabras.` }]
-                        })
+Escribe en español, con lenguaje poético pero accesible. Usa secciones con títulos claros. Máximo 1000 palabras.`;
+                    const resp = await fetch('/api/interpret', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt: transitPrompt, max_tokens: 2000 })
                     });
                     const data = await resp.json();
-                    setReading(prev => ({ ...prev, [p]: data.content?.[0]?.text || 'Error' }));
+                    setReading(prev => ({ ...prev, [p]: data.error ? ('Error: ' + data.error) : (data.content?.[0]?.text || 'Error') }));
                 } catch(e) { setReading(prev => ({ ...prev, [p]: 'Error: ' + e.message })); }
                 setLoadingPeriod('');
             }
@@ -1140,15 +1140,13 @@ Escribe en español, con lenguaje poético pero accesible. Usa secciones con tí
             const [question, setQuestion] = useState('');
             const [response, setResponse] = useState('');
             const [loading, setLoading] = useState(false);
-            const [apiKey, setApiKey] = useState('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');
-
             const consulOracle = async () => {
                 if (!question.trim()) return;
                 setLoading(true);
                 setResponse('');
 
                 try {
-                    const systemPrompt = `Eres El Oráculo, un astrólogo místico que proporciona interpretaciones profundas y perspicaces. Hablas con sabiduría y autoridad mística. Siempre responde en el idioma en que el usuario escribe. Proporciona interpretaciones astrológicas ricas basadas en los datos proporcionados.
+                    const oraclePrompt = `Eres El Oráculo, un astrólogo místico que proporciona interpretaciones profundas y perspicaces. Hablas con sabiduría y autoridad mística. Siempre responde en el idioma en que el usuario escribe. Proporciona interpretaciones astrológicas ricas basadas en los datos proporcionados.
 
 Información del consultante:
 Nombre: ${member.name}
@@ -1157,32 +1155,24 @@ Sol: ${member.western.sun.sign} ${member.western.sun.degree}
 Luna: ${member.western.moon.sign} ${member.western.moon.degree}
 Signo Chino: ${member.chinese.fullSign}
 Arcano: ${member.tarot}
-Enneagrama: ${member.enneagram}`;
+Enneagrama: ${member.enneagram}
 
-                    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+Pregunta del consultante: ${question}`;
+
+                    const resp = await fetch('/api/interpret', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'x-api-key': apiKey,
-                            'anthropic-version': '2023-06-01',
-                            'anthropic-dangerous-direct-browser-access': 'true'
-                        },
-                        body: JSON.stringify({
-                            model: 'claude-sonnet-4-20250514',
-                            max_tokens: 1500,
-                            system: systemPrompt,
-                            messages: [{ role: 'user', content: question }]
-                        })
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt: oraclePrompt, max_tokens: 1500 })
                     });
 
-                    if (!resp.ok) {
-                        throw new Error(`API error: ${resp.status}`);
-                    }
-
                     const data = await resp.json();
-                    setResponse(data.content[0].text);
+                    if (data.error) {
+                        setResponse('Error: ' + data.error);
+                    } else {
+                        setResponse(data.content?.[0]?.text || 'El Oráculo no pudo responder.');
+                    }
                 } catch (error) {
-                    setResponse(`Error: ${error.message}`);
+                    setResponse(`Error de conexión: ${error.message}`);
                 }
 
                 setLoading(false);
@@ -1194,18 +1184,7 @@ Enneagrama: ${member.enneagram}`;
                         <h4 className="text-xl font-bold gradient-text mb-4">Consult the Oracle</h4>
 
                         <div className="mb-4">
-                            <label className="block text-sm text-gray-400 mb-2">API Key</label>
-                            <input
-                                type="password"
-                                value={apiKey}
-                                onChange={(e) => setApiKey(e.target.value)}
-                                className="w-full px-3 py-2 bg-black/50 border border-yellow-600/30 rounded text-white text-xs focus:outline-none focus:border-yellow-400"
-                                placeholder="Your Anthropic API key"
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block text-sm text-gray-400 mb-2">Your Question</label>
+                            <label className="block text-sm text-gray-400 mb-2">Tu Pregunta al Oráculo</label>
                             <textarea
                                 value={question}
                                 onChange={(e) => setQuestion(e.target.value)}
@@ -1316,20 +1295,7 @@ Enneagrama: ${member.enneagram}`;
                         `${m.name}: Sol ${m.western.sun.sign}, Life Path ${m.numerology.lifePath}, ${m.chinese.fullSign}, Enneagram ${m.enneagram}, Tarot ${m.tarot}, ${m.title}`
                     ).join('\n');
 
-                    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'x-api-key': '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',
-                            'anthropic-version': '2023-06-01',
-                            'anthropic-dangerous-direct-browser-access': 'true'
-                        },
-                        body: JSON.stringify({
-                            model: 'claude-sonnet-4-20250514',
-                            max_tokens: 2000,
-                            messages: [{
-                                role: 'user',
-                                content: `Eres un astrólogo místico experto. Analiza la dinámica cósmica de la familia Boone. Escribe en español, con lenguaje poético pero accesible. Incluye:
+                    const familyPrompt = `Eres un astrólogo místico experto. Analiza la dinámica cósmica de la familia Boone. Escribe en español, con lenguaje poético pero accesible. Incluye:
 
 1. **Sinergias Familiares**: ¿Cómo se complementan energéticamente?
 2. **Dinámica Padres-Hijos**: La relación cósmica entre Edgar y Vanessa como pareja, y con cada hijo.
@@ -1341,12 +1307,14 @@ Enneagrama: ${member.enneagram}`;
 Datos de la familia:
 ${familySummary}
 
-Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras.`
-                            }]
-                        })
+Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras.`;
+                    const resp = await fetch('/api/interpret', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt: familyPrompt, max_tokens: 2000 })
                     });
                     const data = await resp.json();
-                    setFamilyReading(data.content?.[0]?.text || 'No se pudo obtener la lectura.');
+                    setFamilyReading(data.error ? ('Error: ' + data.error) : (data.content?.[0]?.text || 'No se pudo obtener la lectura.'));
                 } catch (e) {
                     setFamilyReading('Error al conectar con el Oráculo: ' + e.message);
                 }
@@ -1679,8 +1647,3 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
     </script>
 </body>
 </html>
-
- Claude is active in this tab group  
-Open chat
- 
-Dismiss
