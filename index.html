@@ -1144,7 +1144,7 @@ Escribe en español, con lenguaje poético pero accesible. Usa secciones con tí
                 <div className="space-y-6">
                     <div className="cosmic-card p-6">
                         <h4 className="text-xl font-bold gradient-text mb-4">Pronóstico Energético {period === 'hoy' ? 'de Hoy' : period === 'semana' ? 'de la Semana' : period === 'mes' ? 'del Mes' : period === 'ano' ? '2026' : period === '3anos' ? '2026-2028' : period === '5anos' ? '2026-2030' : '2026-2036'}</h4>
-                        <ResponsiveContainer width="100%" height={300}>
+                        <ResponsiveContainer key={'transit-chart-' + period} width="100%" height={300}>
                             <AreaChart data={chartData}>
                                 <defs>
                                     <linearGradient id="tGrad" x1="0" y1="0" x2="0" y2="1">
@@ -1723,9 +1723,187 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
             );
         }
 
+        // ==================== LOGIN SCREEN ====================
+        function LoginScreen({ onLogin }) {
+            const [username, setUsername] = useState('');
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+            const [loading, setLoading] = useState(false);
+
+            async function handleLogin(e) {
+                e.preventDefault();
+                setError('');
+                setLoading(true);
+                try {
+                    const resp = await fetch('/api/auth', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: username.trim(), password })
+                    });
+                    const data = await resp.json();
+                    if (resp.ok && data.success) {
+                        sessionStorage.setItem('oracle_token', data.token);
+                        sessionStorage.setItem('oracle_user', data.user);
+                        onLogin(data.user, data.displayName);
+                    } else {
+                        setError(data.error || 'Credenciales inválidas');
+                    }
+                } catch (err) {
+                    setError('Error de conexión. Intenta de nuevo.');
+                }
+                setLoading(false);
+            }
+
+            return (
+                <div className="min-h-screen flex items-center justify-center relative" style={{ background: 'linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #16213e 100%)' }}>
+                    <StarfieldBackground />
+                    <div className="relative z-10 w-full max-w-md mx-4">
+                        <div className="text-center mb-8">
+                            <h1 className="text-5xl md:text-6xl font-bold gradient-text gold-shimmer mb-3" style={{ fontFamily: 'Cinzel, serif' }}>
+                                The Oracle's Mirror
+                            </h1>
+                            <p className="text-yellow-400 text-lg" style={{ fontFamily: 'Playfair Display, serif' }}>
+                                Boone Family Cosmic Portal
+                            </p>
+                            <div className="mt-4 text-6xl">🔮</div>
+                        </div>
+
+                        <form onSubmit={handleLogin} className="cosmic-card p-8 space-y-6">
+                            <h2 className="text-2xl font-bold text-center gradient-text" style={{ fontFamily: 'Cinzel, serif' }}>
+                                Acceso al Portal
+                            </h2>
+
+                            {error && (
+                                <div className="bg-red-900/30 border border-red-500/50 rounded-lg p-3 text-center">
+                                    <p className="text-red-300 text-sm">⚠️ {error}</p>
+                                </div>
+                            )}
+
+                            <div>
+                                <label className="block text-yellow-400 text-sm font-semibold mb-2" style={{ fontFamily: 'Cinzel, serif' }}>
+                                    ✦ Usuario
+                                </label>
+                                <input
+                                    type="text"
+                                    value={username}
+                                    onChange={e => setUsername(e.target.value)}
+                                    className="w-full px-4 py-3 rounded-lg bg-black/50 border border-yellow-600/30 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400/50 transition-all"
+                                    placeholder="Tu nombre de usuario"
+                                    autoComplete="username"
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-yellow-400 text-sm font-semibold mb-2" style={{ fontFamily: 'Cinzel, serif' }}>
+                                    ✦ Contraseña
+                                </label>
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    className="w-full px-4 py-3 rounded-lg bg-black/50 border border-yellow-600/30 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400/50 transition-all"
+                                    placeholder="Tu contraseña"
+                                    autoComplete="current-password"
+                                    required
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full py-3 rounded-lg font-bold text-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+                                style={{ background: 'linear-gradient(135deg, #d4a574, #f0d78c)', color: '#1a0a2e', fontFamily: 'Cinzel, serif' }}
+                            >
+                                {loading ? (
+                                    <span className="flex items-center justify-center gap-2">
+                                        <span className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                                        Consultando los astros...
+                                    </span>
+                                ) : (
+                                    '✨ Entrar al Portal ✨'
+                                )}
+                            </button>
+                        </form>
+
+                        <p className="text-center text-gray-500 text-xs mt-6">
+                            Portal exclusivo para la Familia Boone
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+
         // ==================== MAIN APP ====================
         function OracleMirror() {
             const [selectedMember, setSelectedMember] = useState('edgar');
+            const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [currentUser, setCurrentUser] = useState('');
+            const [displayName, setDisplayName] = useState('');
+            const [authChecking, setAuthChecking] = useState(true);
+
+            // Check for existing session on mount
+            useEffect(() => {
+                async function checkSession() {
+                    const token = sessionStorage.getItem('oracle_token');
+                    if (!token) {
+                        setAuthChecking(false);
+                        return;
+                    }
+                    try {
+                        const resp = await fetch('/api/verify', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ token })
+                        });
+                        const data = await resp.json();
+                        if (data.valid) {
+                            setIsAuthenticated(true);
+                            setCurrentUser(data.user);
+                            setDisplayName(data.displayName);
+                        } else {
+                            sessionStorage.removeItem('oracle_token');
+                            sessionStorage.removeItem('oracle_user');
+                        }
+                    } catch (e) {
+                        // Token invalid, clear it
+                        sessionStorage.removeItem('oracle_token');
+                        sessionStorage.removeItem('oracle_user');
+                    }
+                    setAuthChecking(false);
+                }
+                checkSession();
+            }, []);
+
+            function handleLogin(user, name) {
+                setIsAuthenticated(true);
+                setCurrentUser(user);
+                setDisplayName(name);
+            }
+
+            function handleLogout() {
+                sessionStorage.removeItem('oracle_token');
+                sessionStorage.removeItem('oracle_user');
+                setIsAuthenticated(false);
+                setCurrentUser('');
+                setDisplayName('');
+            }
+
+            if (authChecking) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #16213e 100%)' }}>
+                        <div className="text-center">
+                            <div className="text-6xl mb-4">🔮</div>
+                            <div className="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                            <p className="text-yellow-400" style={{ fontFamily: 'Cinzel, serif' }}>Alineando los astros...</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (!isAuthenticated) {
+                return <LoginScreen onLogin={handleLogin} />;
+            }
 
             return (
                 <div className="main-content">
@@ -1733,12 +1911,28 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
 
                     <header className="sticky top-0 z-10 bg-gradient-to-b from-black/80 to-transparent backdrop-blur-md border-b border-yellow-600/20 py-6 mb-8">
                         <div className="max-w-7xl mx-auto px-4">
-                            <h1 className="text-5xl md:text-6xl font-bold text-center gradient-text gold-shimmer mb-2" style={{ fontFamily: 'Cinzel, serif' }}>
-                                The Oracle's Mirror
-                            </h1>
-                            <p className="text-center text-yellow-400 text-lg" style={{ fontFamily: 'Playfair Display, serif' }}>
-                                Boone Family Cosmic Portal
-                            </p>
+                            <div className="flex justify-between items-center">
+                                <div className="flex-1"></div>
+                                <div className="text-center flex-shrink-0">
+                                    <h1 className="text-5xl md:text-6xl font-bold gradient-text gold-shimmer mb-2" style={{ fontFamily: 'Cinzel, serif' }}>
+                                        The Oracle's Mirror
+                                    </h1>
+                                    <p className="text-yellow-400 text-lg" style={{ fontFamily: 'Playfair Display, serif' }}>
+                                        Boone Family Cosmic Portal
+                                    </p>
+                                </div>
+                                <div className="flex-1 flex justify-end items-center gap-3">
+                                    <span className="text-yellow-400 text-sm hidden md:inline" style={{ fontFamily: 'Cinzel, serif' }}>
+                                        ✦ {displayName}
+                                    </span>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-black/30 text-gray-400 border border-yellow-600/20 hover:text-yellow-300 hover:border-yellow-400/50 transition-all"
+                                    >
+                                        Salir
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </header>
 
