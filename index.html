@@ -1030,10 +1030,72 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
             const [reading, setReading] = useState({});
             const [loadingPeriod, setLoadingPeriod] = useState('');
 
-            const chartData = member.monthlyEnergy2026.map((val, i) => ({
-                month: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][i],
-                energy: val
-            }));
+            // Helper function to generate seeded pseudo-random data
+            function seededRandom(seed) {
+                const x = Math.sin(seed) * 10000;
+                return x - Math.floor(x);
+            }
+
+            // Generate chart data based on selected period
+            function getChartDataForPeriod(p) {
+                const hash = (str) => {
+                    let h = 0;
+                    for (let i = 0; i < str.length; i++) h = ((h << 5) - h) + str.charCodeAt(i);
+                    return h;
+                };
+                const baseSeed = hash(member.name + p);
+
+                if (p === 'hoy') {
+                    // 24-hour energy curve for today
+                    const hours = [];
+                    for (let i = 0; i < 24; i++) {
+                        const baseEnergy = 5 + 2 * Math.sin((i - 6) * Math.PI / 12);
+                        const randomFactor = seededRandom(baseSeed + i) * 1.5;
+                        hours.push({ hour: `${i}:00`, energy: Math.max(1, Math.min(10, baseEnergy + randomFactor)) });
+                    }
+                    return hours;
+                } else if (p === 'semana') {
+                    // 7-day energy curve
+                    const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+                    return days.map((day, i) => ({
+                        day,
+                        energy: Math.max(2, Math.min(10, 5 + seededRandom(baseSeed + i) * 4))
+                    }));
+                } else if (p === 'mes') {
+                    // 4-week energy curve
+                    return ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'].map((week, i) => ({
+                        week,
+                        energy: Math.max(2, Math.min(10, 5 + seededRandom(baseSeed + i) * 4))
+                    }));
+                } else if (p === 'ano') {
+                    // Monthly data for 2026 (existing)
+                    return member.monthlyEnergy2026.map((val, i) => ({
+                        month: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][i],
+                        energy: val
+                    }));
+                } else if (p === '3anos') {
+                    // Yearly data for 2026-2028
+                    return [
+                        { year: '2026', energy: 6 + seededRandom(baseSeed) * 3 },
+                        { year: '2027', energy: 5 + seededRandom(baseSeed + 1) * 3 },
+                        { year: '2028', energy: 7 + seededRandom(baseSeed + 2) * 3 }
+                    ];
+                } else if (p === '5anos') {
+                    // Yearly data for 2026-2030
+                    return Array.from({ length: 5 }, (_, i) => ({
+                        year: String(2026 + i),
+                        energy: 5 + seededRandom(baseSeed + i) * 4
+                    }));
+                } else if (p === 'decada') {
+                    // Yearly data for 2026-2036
+                    return Array.from({ length: 11 }, (_, i) => ({
+                        year: String(2026 + i),
+                        energy: 5 + seededRandom(baseSeed + i) * 4
+                    }));
+                }
+            }
+
+            const chartData = getChartDataForPeriod(period);
 
             const periods = [
                 { id: 'hoy', label: 'Hoy', icon: '☀️' },
@@ -1081,20 +1143,21 @@ Escribe en español, con lenguaje poético pero accesible. Usa secciones con tí
             return (
                 <div className="space-y-6">
                     <div className="cosmic-card p-6">
-                        <h4 className="text-xl font-bold gradient-text mb-4">Pronóstico Energético 2026</h4>
+                        <h4 className="text-xl font-bold gradient-text mb-4">Pronóstico Energético {period === 'hoy' ? 'de Hoy' : period === 'semana' ? 'de la Semana' : period === 'mes' ? 'del Mes' : period === 'ano' ? '2026' : period === '3anos' ? '2026-2028' : period === '5anos' ? '2026-2030' : '2026-2036'}</h4>
                         <ResponsiveContainer width="100%" height={300}>
                             <AreaChart data={chartData}>
                                 <defs>
                                     <linearGradient id="tGrad" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#f0d78c" stopOpacity={0.8}/>
-                                        <stop offset="95%" stopColor="#f0d78c" stopOpacity={0.1}/>
+                                        <stop offset="5%" stopColor="#f0d78c" stopOpacity={1}/>
+                                        <stop offset="30%" stopColor="#d4a574" stopOpacity={0.6}/>
+                                        <stop offset="95%" stopColor="#c084fc" stopOpacity={0.05}/>
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,165,116,0.2)" />
-                                <XAxis dataKey="month" stroke="#808080" />
+                                <XAxis dataKey={period === 'hoy' ? 'hour' : period === 'semana' ? 'day' : period === 'mes' ? 'week' : (period === 'ano' ? 'month' : 'year')} stroke="#808080" style={{ fontSize: '12px' }} />
                                 <YAxis stroke="#808080" domain={[0,10]} />
-                                <Tooltip contentStyle={{ background: '#1a0a2e', border: '1px solid #d4a574', borderRadius: '8px' }} />
-                                <Area type="monotone" dataKey="energy" stroke="#f0d78c" fillOpacity={1} fill="url(#tGrad)" />
+                                <Tooltip contentStyle={{ background: '#1a0a2e', border: '2px solid #d4a574', borderRadius: '8px', boxShadow: '0 0 15px rgba(212,165,116,0.3)' }} cursor={{ fill: 'rgba(212,165,116,0.1)' }} />
+                                <Area type="monotone" dataKey="energy" stroke="#f0d78c" strokeWidth={3} fillOpacity={1} fill="url(#tGrad)" dot={{ fill: '#f0d78c', r: 4 }} activeDot={{ r: 6, fill: '#d4a574' }} isAnimationActive={true} />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
@@ -1369,12 +1432,12 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                                     <ResponsiveContainer width="100%" height={280}>
                                         <PieChart>
                                             <Pie data={elementData} cx="50%" cy="50%" innerRadius={60} outerRadius={100}
-                                                label={({ name, value }) => `${name}: ${value}`} dataKey="value">
+                                                label={({ name, value }) => `${name}: ${value}`} dataKey="value" isAnimationActive={true}>
                                                 {elementData.map((entry, index) => (
                                                     <Cell key={index} fill={ELEM_COLORS[entry.name] || '#888'} />
                                                 ))}
                                             </Pie>
-                                            <Tooltip />
+                                            <Tooltip contentStyle={{ background: '#1a0a2e', border: '2px solid #d4a574', borderRadius: '8px', boxShadow: '0 0 15px rgba(212,165,116,0.3)' }} />
                                         </PieChart>
                                     </ResponsiveContainer>
                                     <div className="flex flex-col justify-center space-y-3">
@@ -1390,6 +1453,47 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                                         ))}
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="cosmic-card p-6">
+                                <h4 className="text-xl font-bold gradient-text mb-4">Constelación Familiar — Compatibilidad Cósmica</h4>
+                                <ResponsiveContainer width="100%" height={400}>
+                                    <RadarChart data={[
+                                        { dimension: 'Intelecto', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.numerology.expression || 5) * 1.2)), 0) / members.length },
+                                        { dimension: 'Emoción', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.western.moon.sign === 'Cancer' ? 8 : m.western.moon.sign === 'Pisces' ? 8 : m.western.moon.sign === 'Scorpio' ? 7 : 5))), 0) / members.length },
+                                        { dimension: 'Acción', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.western.mars.sign === 'Aries' ? 9 : m.western.mars.sign === 'Cancer' ? 5 : m.western.mars.sign === 'Leo' ? 8 : 6))), 0) / members.length },
+                                        { dimension: 'Espiritualidad', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.chinese.element === 'Water' ? 8 : m.chinese.element === 'Fire' ? 6 : m.chinese.element === 'Wood' ? 7 : 5))), 0) / members.length },
+                                        { dimension: 'Creatividad', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.tarot.includes('Empress') ? 9 : m.tarot.includes('Magician') ? 8 : 6))), 0) / members.length },
+                                        { dimension: 'Liderazgo', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.numerology.lifePath <= 3 ? 8 : m.numerology.lifePath <= 6 ? 6 : 5))), 0) / members.length }
+                                    ]}>
+                                        <PolarGrid stroke="rgba(212,165,116,0.3)" />
+                                        <PolarAngleAxis dataKey="dimension" stroke="#a0a0a0" tick={{ fontSize: 11 }} />
+                                        <PolarRadiusAxis stroke="#606060" domain={[0, 10]} />
+                                        <Tooltip contentStyle={{ background: '#1a0a2e', border: '2px solid #d4a574', borderRadius: '8px', boxShadow: '0 0 15px rgba(212,165,116,0.3)' }} />
+                                        <Radar name="Familia Boone" dataKey="value" stroke="#f0d78c" fill="#d4a574" fillOpacity={0.35} isAnimationActive={true} dot={{ fill: '#f0d78c', r: 5 }} />
+                                    </RadarChart>
+                                </ResponsiveContainer>
+                                <p className="text-center text-gray-400 text-sm mt-4 italic">Promedio de fortalezas cósmicas de la constelación familiar</p>
+                            </div>
+
+                            <div className="cosmic-card p-6">
+                                <h4 className="text-xl font-bold gradient-text mb-4">🔮 Interpretación Conjunta de la Constelación Familiar</h4>
+                                {!familyReading && !isLoadingReading && (
+                                    <button onClick={getFamilyReading} className="w-full px-6 py-3 rounded-lg font-bold transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #d4a574, #f0d78c)', color: '#1a0a2e' }}>
+                                        ✨ Generar Interpretación Cósmica ✨
+                                    </button>
+                                )}
+                                {isLoadingReading && (
+                                    <div className="flex flex-col items-center gap-3 py-6">
+                                        <div className="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+                                        <p className="text-yellow-400 italic">El Oráculo analiza la compatibilidad cósmica...</p>
+                                    </div>
+                                )}
+                                {familyReading && (
+                                    <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }} className="bg-black/20 rounded-lg p-6 border border-yellow-600/20 mt-4">
+                                        <p className="text-gray-300">{familyReading}</p>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="cosmic-card p-6">
@@ -1424,12 +1528,12 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                                 <ResponsiveContainer width="100%" height={400}>
                                     <BarChart data={numCompareData} barGap={2}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,165,116,0.2)" />
-                                        <XAxis dataKey="name" stroke="#a0a0a0" />
+                                        <XAxis dataKey="name" stroke="#a0a0a0" style={{ fontSize: '12px' }} />
                                         <YAxis stroke="#a0a0a0" />
-                                        <Tooltip contentStyle={{ background: '#1a0a2e', border: '1px solid #d4a574', borderRadius: '8px' }} />
+                                        <Tooltip contentStyle={{ background: '#1a0a2e', border: '2px solid #d4a574', borderRadius: '8px', boxShadow: '0 0 15px rgba(212,165,116,0.3)' }} cursor={{ fill: 'rgba(212,165,116,0.1)' }} />
                                         <Legend />
                                         {members.map((m, i) => (
-                                            <Bar key={i} dataKey={m.name.split(' ')[0]} fill={MEMBER_COLORS[i]} radius={[4,4,0,0]} />
+                                            <Bar key={i} dataKey={m.name.split(' ')[0]} fill={MEMBER_COLORS[i]} radius={[6,6,0,0]} isAnimationActive={true} />
                                         ))}
                                     </BarChart>
                                 </ResponsiveContainer>
@@ -1453,7 +1557,9 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                                                     <RadarChart data={rd}>
                                                         <PolarGrid stroke="rgba(212,165,116,0.3)" />
                                                         <PolarAngleAxis dataKey="name" stroke="#a0a0a0" tick={{ fontSize: 10 }} />
-                                                        <Radar dataKey="value" stroke={MEMBER_COLORS[i]} fill={MEMBER_COLORS[i]} fillOpacity={0.4} />
+                                                        <PolarRadiusAxis stroke="#606060" domain={[0, 10]} tick={{ fontSize: 8 }} />
+                                                        <Tooltip contentStyle={{ background: '#1a0a2e', border: '1px solid #d4a574', borderRadius: '6px' }} />
+                                                        <Radar dataKey="value" stroke={MEMBER_COLORS[i]} fill={MEMBER_COLORS[i]} fillOpacity={0.35} isAnimationActive={true} dot={{ fill: MEMBER_COLORS[i], r: 3 }} />
                                                     </RadarChart>
                                                 </ResponsiveContainer>
                                                 <p className="text-center text-yellow-400 text-sm">Año Personal 2026: <strong>{m.numerology.personalYear2026}</strong></p>
@@ -1471,14 +1577,22 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                                 <h4 className="text-xl font-bold gradient-text mb-4">Pronóstico Energético 2026 — Comparativa Familiar</h4>
                                 <ResponsiveContainer width="100%" height={400}>
                                     <AreaChart data={energyData}>
+                                        <defs>
+                                            {activeMembers.map((m, i) => (
+                                                <linearGradient key={i} id={`areaGrad${i}`} x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor={MEMBER_COLORS[i]} stopOpacity={0.8}/>
+                                                    <stop offset="95%" stopColor={MEMBER_COLORS[i]} stopOpacity={0.05}/>
+                                                </linearGradient>
+                                            ))}
+                                        </defs>
                                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,165,116,0.2)" />
-                                        <XAxis dataKey="name" stroke="#a0a0a0" />
+                                        <XAxis dataKey="name" stroke="#a0a0a0" style={{ fontSize: '12px' }} />
                                         <YAxis stroke="#a0a0a0" domain={[0, 10]} />
-                                        <Tooltip contentStyle={{ background: '#1a0a2e', border: '1px solid #d4a574', borderRadius: '8px' }} />
+                                        <Tooltip contentStyle={{ background: '#1a0a2e', border: '2px solid #d4a574', borderRadius: '8px', boxShadow: '0 0 15px rgba(212,165,116,0.3)' }} cursor={{ fill: 'rgba(212,165,116,0.1)' }} />
                                         <Legend />
                                         {activeMembers.map((m, i) => (
                                             <Area key={i} type="monotone" dataKey={m.name.split(' ')[0]} stroke={MEMBER_COLORS[i]}
-                                                fill={MEMBER_COLORS[i]} fillOpacity={0.15} strokeWidth={2} />
+                                                fill={`url(#areaGrad${i})`} fillOpacity={1} strokeWidth={3} dot={{ fill: MEMBER_COLORS[i], r: 3 }} activeDot={{ r: 5 }} isAnimationActive={true} />
                                         ))}
                                     </AreaChart>
                                 </ResponsiveContainer>
@@ -1514,11 +1628,11 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <ResponsiveContainer width="100%" height={280}>
                                         <PieChart>
-                                            <Pie data={sunSignData} cx="50%" cy="50%" outerRadius={100}
-                                                label={({ name, value }) => `${name}: ${value}`} dataKey="value">
-                                                {sunSignData.map((_, i) => <Cell key={i} fill={MEMBER_COLORS[i]} />)}
+                                            <Pie data={sunSignData} cx="50%" cy="50%" outerRadius={100} innerRadius={40}
+                                                label={({ name, value }) => `${name}: ${value}`} dataKey="value" isAnimationActive={true}>
+                                                {sunSignData.map((_, i) => <Cell key={i} fill={MEMBER_COLORS[i % MEMBER_COLORS.length]} />)}
                                             </Pie>
-                                            <Tooltip />
+                                            <Tooltip contentStyle={{ background: '#1a0a2e', border: '1px solid #d4a574', borderRadius: '6px' }} />
                                         </PieChart>
                                     </ResponsiveContainer>
                                     <div className="flex flex-col justify-center space-y-4">
