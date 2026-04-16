@@ -1855,11 +1855,16 @@ Pregunta del consultante: ${question}`;
                 e.preventDefault();
                 setError('');
                 setLoading(true);
+
+                const validUsers = ['edgar', 'vanessa', 'isha', 'ivan', 'christian', 'gabriel', 'mikel'];
+                const user = username.trim().toLowerCase();
+
+                // Try server-side auth first
                 try {
                     const resp = await fetch('/api/auth', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: username.trim(), password })
+                        body: JSON.stringify({ username: user, password })
                     });
                     const data = await resp.json();
                     if (resp.ok && data.success) {
@@ -1867,12 +1872,34 @@ Pregunta del consultante: ${question}`;
                         sessionStorage.setItem('oracle_user', data.user);
                         await syncReadingsFromServer(data.token);
                         onLogin(data.user, data.displayName);
-                    } else {
-                        setError(data.error || 'Credenciales inválidas');
+                        setLoading(false);
+                        return;
                     }
                 } catch (err) {
-                    setError('Error de conexión. Intenta de nuevo.');
+                    // Server auth unavailable, fall through to client-side
                 }
+
+                // Client-side fallback auth
+                if (validUsers.includes(user)) {
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(password);
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                    const FAMILY_HASH = '73d4f7f9a1cd65f6abf53f4ef0e3dbbb56fd51dfdf39fa0e8388876b9955288c';
+
+                    if (hashHex === FAMILY_HASH) {
+                        const displayName = user.charAt(0).toUpperCase() + user.slice(1);
+                        const tkn = btoa(JSON.stringify({ user, exp: Date.now() + 7*24*60*60*1000, local: true }));
+                        sessionStorage.setItem('oracle_token', tkn);
+                        sessionStorage.setItem('oracle_user', user);
+                        onLogin(user, displayName);
+                        setLoading(false);
+                        return;
+                    }
+                }
+
+                setError('Credenciales inv\u00e1lidas');
                 setLoading(false);
             }
 
