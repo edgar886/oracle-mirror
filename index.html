@@ -20,6 +20,13 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; }
 
+        .line-clamp-4 {
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
         html {
             overflow-x: hidden;
             max-width: 100vw;
@@ -314,20 +321,23 @@
         // ==================== DATA ====================
         const familyMembers = {
             edgar: {
-                name: "Edgar Boone",
-                title: "The Architect of Vision",
+                name: "Edgar Boone Sabag",
+                title: "The Pioneer-Seeker / The Architect of Vision",
                 born: "June 12, 1972",
                 birthTime: "11:50 AM",
                 birthPlace: "Torreón, Coahuila, México",
                 western: {
-                    sun: { sign: "Gemini", degree: "21°52'" },
-                    moon: { sign: "Cancer", degree: "15°" },
+                    sun: { sign: "Gemini", degree: "21°50'" },
+                    moon: { sign: "Cancer", degree: "9°10'" },
                     rising: { sign: "Virgo", degree: "8°" },
-                    mercury: { sign: "Gemini", degree: "28°" },
-                    venus: { sign: "Taurus", degree: "18°" },
-                    mars: { sign: "Cancer", degree: "4°" },
-                    jupiter: { sign: "Sagittarius", degree: "2°" },
-                    saturn: { sign: "Gemini", degree: "16°" }
+                    mercury: { sign: "Cancer", degree: "1°18'" },
+                    venus: { sign: "Gemini", degree: "29°29'" },
+                    mars: { sign: "Cancer", degree: "19°54'" },
+                    jupiter: { sign: "Capricorn", degree: "4°58'" },
+                    saturn: { sign: "Gemini", degree: "11°34'" },
+                    uranus: { sign: "Libra", degree: "14°14'" },
+                    neptune: { sign: "Sagittarius", degree: "3°23'" },
+                    pluto: { sign: "Virgo", degree: "29°19'" }
                 },
                 vedic: {
                     lagna: "Leo (Simha)",
@@ -335,24 +345,32 @@
                     nakshatra: "Mrigashira",
                     atmakaraka: "Saturn"
                 },
-                numerology: { lifePath: 1, expression: 8, soulUrge: 7, personality: 3, maturity: 9, personalYear2026: 4 },
+                numerology: { lifePath: 1, expression: 8, soulUrge: 7, personality: 1, maturity: 9, personalYear2026: 4 },
                 chinese: { animal: "Rat", element: "Water", fullSign: "Water Rat (Ren Zi)" },
                 tarot: "The Empress + The Magician",
                 iChing: { hex: 11, name: "Tai", meaning: "Peace" },
-                humanDesign: "Manifesting Generator 1/3",
+                humanDesign: "Manifesting Generator 1/3, Sacral Authority, Split Definition",
                 enneagram: "5w4",
                 mayan: "Kin 167 Blue Self-Existing Hand",
                 monthlyEnergy2026: [5, 6, 7, 5, 6, 8, 7, 6, 5, 7, 8, 6],
-                natalPositions: { sun: 81.87, moon: 105, mercury: 88, venus: 48, mars: 94, jupiter: 242, saturn: 76 }
+                natalPositions: { sun: 81.83, moon: 99.16, mercury: 91.30, venus: 89.49, mars: 109.90, jupiter: 274.97, saturn: 71.56, uranus: 194.23, neptune: 243.39, pluto: 179.32 }
             },
             vanessa: {
                 name: "Vanessa Sahagún Arellano",
-                title: "The Nurturer Who Builds Civilizations",
+                title: "The Nurturer Who Builds Civilizations / The Master Builder",
                 born: "April 26, 1983",
                 birthPlace: "México",
                 western: {
-                    sun: { sign: "Taurus", degree: "6°" },
-                    moon: { sign: "—", degree: "—" }
+                    sun: { sign: "Taurus", degree: "5°56'" },
+                    moon: { sign: "Libra", degree: "29°23'" },
+                    mercury: { sign: "Taurus", degree: "24°25'" },
+                    venus: { sign: "Gemini", degree: "15°30'" },
+                    mars: { sign: "Taurus", degree: "15°33'" },
+                    jupiter: { sign: "Sagittarius", degree: "9°35'" },
+                    saturn: { sign: "Scorpio", degree: "0°45'" },
+                    uranus: { sign: "Sagittarius", degree: "8°21'" },
+                    neptune: { sign: "Sagittarius", degree: "29°03'" },
+                    pluto: { sign: "Libra", degree: "27°55'" }
                 },
                 vedic: { lagna: "—", moonSign: "—", nakshatra: "—", atmakaraka: "—" },
                 numerology: { lifePath: 6, expression: 22, soulUrge: 6, personality: 7, maturity: 1, personalYear2026: 4 },
@@ -363,16 +381,24 @@
                 enneagram: "2/6",
                 mayan: "—",
                 monthlyEnergy2026: [5, 6, 7, 6, 7, 9, 8, 7, 9, 6, 5, 7],
-                natalPositions: { sun: 36, moon: 0 }
+                natalPositions: { sun: 35.93, moon: 209.39, mercury: 54.42, venus: 75.50, mars: 45.55, jupiter: 249.59, saturn: 210.75, uranus: 248.35, neptune: 269.05, pluto: 207.92 }
             },
             isha: {
                 name: "Isha Boone",
-                title: "The Philosopher-Healer / The Light",
+                title: "The Philosopher-Healer / The Light / The Name That Means God",
                 born: "August 30, 2014",
-                birthPlace: "Earth",
+                birthPlace: "México",
                 western: {
-                    sun: { sign: "Virgo", degree: "7°" },
-                    moon: { sign: "—", degree: "—" }
+                    sun: { sign: "Virgo", degree: "7°17'" },
+                    moon: { sign: "Scorpio", degree: "4°44'" },
+                    mercury: { sign: "Virgo", degree: "26°10'" },
+                    venus: { sign: "Leo", degree: "22°38'" },
+                    mars: { sign: "Scorpio", degree: "20°47'" },
+                    jupiter: { sign: "Leo", degree: "9°54'" },
+                    saturn: { sign: "Scorpio", degree: "17°58'" },
+                    uranus: { sign: "Aries", degree: "15°55'" },
+                    neptune: { sign: "Pisces", degree: "6°10'" },
+                    pluto: { sign: "Capricorn", degree: "11°08'" }
                 },
                 vedic: { lagna: "—", moonSign: "—", nakshatra: "—", atmakaraka: "—" },
                 numerology: { lifePath: 9, expression: 7, soulUrge: 9, personality: 7, maturity: 7, personalYear2026: 3 },
@@ -383,16 +409,24 @@
                 enneagram: "4w5",
                 mayan: "—",
                 monthlyEnergy2026: [7, 6, 8, 7, 6, 7, 8, 7, 6, 8, 7, 9],
-                natalPositions: { sun: 157, moon: 0 }
+                natalPositions: { sun: 157.29, moon: 214.74, mercury: 176.17, venus: 142.64, mars: 230.78, jupiter: 129.90, saturn: 227.97, uranus: 15.91, neptune: 336.16, pluto: 281.13 }
             },
             ivan: {
                 name: "Ivan Boone",
-                title: "The Philosopher-Healer / The Mirror Twin",
+                title: "The Philosopher-Healer / The Mirror Twin / The Mountain",
                 born: "August 30, 2014",
-                birthPlace: "Earth",
+                birthPlace: "México",
                 western: {
-                    sun: { sign: "Virgo", degree: "7°" },
-                    moon: { sign: "—", degree: "—" }
+                    sun: { sign: "Virgo", degree: "7°17'" },
+                    moon: { sign: "Scorpio", degree: "4°44'" },
+                    mercury: { sign: "Virgo", degree: "26°10'" },
+                    venus: { sign: "Leo", degree: "22°38'" },
+                    mars: { sign: "Scorpio", degree: "20°47'" },
+                    jupiter: { sign: "Leo", degree: "9°54'" },
+                    saturn: { sign: "Scorpio", degree: "17°58'" },
+                    uranus: { sign: "Aries", degree: "15°55'" },
+                    neptune: { sign: "Pisces", degree: "6°10'" },
+                    pluto: { sign: "Capricorn", degree: "11°08'" }
                 },
                 vedic: { lagna: "—", moonSign: "—", nakshatra: "—", atmakaraka: "—" },
                 numerology: { lifePath: 9, expression: 7, soulUrge: 9, personality: 7, maturity: 7, personalYear2026: 3 },
@@ -403,17 +437,24 @@
                 enneagram: "5w4",
                 mayan: "—",
                 monthlyEnergy2026: [7, 6, 8, 7, 6, 7, 8, 7, 6, 8, 7, 9],
-                natalPositions: { sun: 157, moon: 0 }
+                natalPositions: { sun: 157.29, moon: 214.74, mercury: 176.17, venus: 142.64, mars: 230.78, jupiter: 129.90, saturn: 227.97, uranus: 15.91, neptune: 336.16, pluto: 281.13 }
             },
             christian: {
                 name: "Christian Boone",
-                title: "The Warrior-Humanitarian",
+                title: "The Warrior-Humanitarian / The Shield",
                 born: "August 30, 2014",
-                birthPlace: "Earth",
+                birthPlace: "México",
                 western: {
-                    sun: { sign: "Virgo", degree: "7°" },
-                    moon: { sign: "—", degree: "—" },
-                    mars: { sign: "Scorpio", degree: "—" }
+                    sun: { sign: "Virgo", degree: "7°17'" },
+                    moon: { sign: "Scorpio", degree: "4°44'" },
+                    mercury: { sign: "Virgo", degree: "26°10'" },
+                    venus: { sign: "Leo", degree: "22°38'" },
+                    mars: { sign: "Scorpio", degree: "20°47'" },
+                    jupiter: { sign: "Leo", degree: "9°54'" },
+                    saturn: { sign: "Scorpio", degree: "17°58'" },
+                    uranus: { sign: "Aries", degree: "15°55'" },
+                    neptune: { sign: "Pisces", degree: "6°10'" },
+                    pluto: { sign: "Capricorn", degree: "11°08'" }
                 },
                 vedic: { lagna: "—", moonSign: "—", nakshatra: "—", atmakaraka: "—" },
                 numerology: { lifePath: 9, expression: 8, soulUrge: 9, personality: 8, maturity: 8, personalYear2026: 3 },
@@ -424,16 +465,24 @@
                 enneagram: "Type 8",
                 mayan: "—",
                 monthlyEnergy2026: [8, 7, 9, 8, 7, 8, 9, 8, 7, 9, 8, 7],
-                natalPositions: { sun: 157, moon: 0, mars: 224 }
+                natalPositions: { sun: 157.29, moon: 214.74, mercury: 176.17, venus: 142.64, mars: 230.78, jupiter: 129.90, saturn: 227.97, uranus: 15.91, neptune: 336.16, pluto: 281.13 }
             },
             gabriel: {
                 name: "Gabriel Boone",
-                title: "The Versatile Peacemaker",
+                title: "The Versatile Peacemaker / The Messenger",
                 born: "August 21, 2016",
-                birthPlace: "Earth",
+                birthPlace: "México",
                 western: {
-                    sun: { sign: "Leo", degree: "29°" },
-                    moon: { sign: "—", degree: "—" }
+                    sun: { sign: "Leo", degree: "29°05'" },
+                    moon: { sign: "Aries", degree: "13°36'" },
+                    mercury: { sign: "Virgo", degree: "25°48'" },
+                    venus: { sign: "Virgo", degree: "19°47'" },
+                    mars: { sign: "Sagittarius", degree: "8°29'" },
+                    jupiter: { sign: "Virgo", degree: "26°06'" },
+                    saturn: { sign: "Sagittarius", degree: "9°50'" },
+                    uranus: { sign: "Aries", degree: "24°18'" },
+                    neptune: { sign: "Pisces", degree: "10°58'" },
+                    pluto: { sign: "Capricorn", degree: "15°14'" }
                 },
                 vedic: { lagna: "—", moonSign: "—", nakshatra: "—", atmakaraka: "—" },
                 numerology: { lifePath: 2, expression: 6, soulUrge: 5, personality: 1, maturity: 8, personalYear2026: 3 },
@@ -444,17 +493,25 @@
                 enneagram: "7w6",
                 mayan: "—",
                 monthlyEnergy2026: [6, 7, 8, 7, 8, 7, 6, 8, 7, 8, 9, 7],
-                natalPositions: { sun: 149, moon: 0 }
+                natalPositions: { sun: 149.09, moon: 13.60, mercury: 175.80, venus: 169.78, mars: 248.48, jupiter: 176.10, saturn: 249.84, uranus: 24.30, neptune: 340.96, pluto: 285.23 }
             },
             mikel: {
                 name: "Mikel Boone",
-                title: "The Awaited One — Soul in Transit",
-                born: "September 19, 2026 (estimated)",
-                birthTime: "12:00 PM (estimated)",
-                birthPlace: "Monterrey, México (estimated)",
+                title: "El Guardián que Llega en la Firma del Año",
+                born: "Sept 9-19, 2026 (estimated window)",
+                birthTime: "— (pending birth)",
+                birthPlace: "Monterrey, Nuevo León, México (estimated)",
                 western: {
-                    sun: { sign: "Virgo", degree: "26°" },
-                    moon: { sign: "—", degree: "—" }
+                    sun: { sign: "Virgo", degree: "26°49'" },
+                    moon: { sign: "Capricorn", degree: "6°28'" },
+                    mercury: { sign: "Libra", degree: "14°35'" },
+                    venus: { sign: "Scorpio", degree: "5°16'" },
+                    mars: { sign: "Cancer", degree: "25°01'" },
+                    jupiter: { sign: "Leo", degree: "17°29'" },
+                    saturn: { sign: "Aries", degree: "12°26'" },
+                    uranus: { sign: "Gemini", degree: "5°40'" },
+                    neptune: { sign: "Aries", degree: "3°11'" },
+                    pluto: { sign: "Aquarius", degree: "3°14'" }
                 },
                 vedic: { lagna: "—", moonSign: "—", nakshatra: "Chitra (estimated)", atmakaraka: "—" },
                 numerology: { lifePath: 2, expression: 5, soulUrge: 3, personality: 2, maturity: 7, personalYear2026: 1 },
@@ -465,7 +522,7 @@
                 enneagram: "— (pending)",
                 mayan: "— (pending)",
                 monthlyEnergy2026: [0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7],
-                natalPositions: { sun: 176, moon: 0 },
+                natalPositions: { sun: 176.82, moon: 276.47, mercury: 194.59, venus: 215.26, mars: 115.01, jupiter: 137.49, saturn: 12.44, uranus: 65.66, neptune: 3.18, pluto: 303.23 },
                 isPending: true
             }
         };
@@ -993,11 +1050,17 @@ Usa un tono místico pero claro. Máximo 800 palabras.`}
                             <div className="cosmic-card p-8">
                                 <h3 className="text-3xl font-bold gradient-text mb-2">{member.name}</h3>
                                 <p className="text-yellow-300 text-lg mb-4">{member.title}</p>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                     <div>
                                         <p className="text-gray-400">Born:</p>
                                         <p className="text-white font-semibold">{member.born}</p>
                                     </div>
+                                    {member.birthTime && (
+                                        <div>
+                                            <p className="text-gray-400">Time:</p>
+                                            <p className="text-white font-semibold">{member.birthTime}</p>
+                                        </div>
+                                    )}
                                     <div>
                                         <p className="text-gray-400">Place:</p>
                                         <p className="text-white font-semibold">{member.birthPlace}</p>
@@ -1416,6 +1479,199 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
             );
         }
 
+        // ==================== KEY HIGHLIGHTS ====================
+        function KeyHighlights({ member, memberKey }) {
+            const highlightPeriods = [
+                { id: 'hoy', label: 'Hoy', icon: '☀️', color: '#f0d78c' },
+                { id: 'semana', label: 'Semana', icon: '📅', color: '#74c0fc' },
+                { id: 'mes', label: 'Mes', icon: '🌙', color: '#51cf66' },
+                { id: 'ano', label: 'Año 2026', icon: '⭐', color: '#ff6b6b' },
+                { id: '3anos', label: '3 Años', icon: '🔮', color: '#cc5de8' },
+                { id: '5anos', label: '5 Años', icon: '🌌', color: '#20c997' },
+                { id: 'decada', label: 'Década', icon: '♾️', color: '#ffd43b' }
+            ];
+
+            const [highlights, setHighlights] = useState(() => {
+                const cached = {};
+                highlightPeriods.forEach(p => {
+                    const stored = loadReading(memberKey, 'highlights', p.id);
+                    if (stored) cached[p.id] = stored.text;
+                });
+                return cached;
+            });
+            const [loadingId, setLoadingId] = useState('');
+            const [expandedId, setExpandedId] = useState(null);
+
+            async function generateHighlight(periodId) {
+                setLoadingId(periodId);
+                try {
+                    const planets = Object.entries(member.western).map(([pl, pos]) => `${pl}: ${pos.sign} ${pos.degree}`).join(', ');
+                    const periodLabels = {
+                        hoy: `HOY (${new Date().toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })})`,
+                        semana: `ESTA SEMANA (semana del ${new Date().toLocaleDateString('es-MX')})`,
+                        mes: `ESTE MES (${new Date().toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })})`,
+                        ano: 'EL AÑO 2026',
+                        '3anos': 'LOS PRÓXIMOS 3 AÑOS (2026-2028)',
+                        '5anos': 'LOS PRÓXIMOS 5 AÑOS (2026-2030)',
+                        decada: 'LA PRÓXIMA DÉCADA (2026-2036)'
+                    };
+                    const prompt = `Eres El Oráculo, un astrólogo maestro. Genera un RESUMEN EJECUTIVO CÓSMICO para ${member.name} para el período: ${periodLabels[periodId]}.
+
+Datos natales: Nacido ${member.born} en ${member.birthPlace}
+Posiciones: ${planets}
+Numerología: Life Path ${member.numerology.lifePath}, Expression ${member.numerology.expression}, Soul Urge ${member.numerology.soulUrge}, Año Personal 2026: ${member.numerology.personalYear2026}
+Signo Chino: ${member.chinese.fullSign}, Enneagram: ${member.enneagram}, Tarot: ${member.tarot}
+I Ching: Hexagrama ${member.iChing.hex} - ${member.iChing.name} (${member.iChing.meaning})
+Human Design: ${member.humanDesign}
+
+FORMATO ESTRICTO - responde EXACTAMENTE así:
+🔑 LO MÁS IMPORTANTE: [una frase directa, la conclusión principal del período]
+
+⚡ ENERGÍA: [nivel del 1-10] — [descripción de 1 línea]
+
+✅ HACER: [3 acciones concretas separadas por |]
+
+⛔ EVITAR: [3 cosas a evitar separadas por |]
+
+🌟 OPORTUNIDAD CLAVE: [la oportunidad más grande del período en 1-2 líneas]
+
+⚠️ ADVERTENCIA: [el mayor riesgo o desafío en 1-2 líneas]
+
+💫 MENSAJE DEL ORÁCULO: [una frase poética, profunda y personal como cierre]
+
+Sé específico para ESTE período y ESTA persona. No generalices. Máximo 250 palabras.`;
+
+                    const resp = await fetch('/api/interpret', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt, max_tokens: 800 })
+                    });
+                    const data = await resp.json();
+                    const result = data.error ? ('Error: ' + data.error) : (data.content?.[0]?.text || 'Error');
+                    setHighlights(prev => ({ ...prev, [periodId]: result }));
+                    saveReading(memberKey, 'highlights', periodId, result);
+                } catch(e) {
+                    setHighlights(prev => ({ ...prev, [periodId]: 'Error: ' + e.message }));
+                }
+                setLoadingId('');
+            }
+
+            function refreshHighlight(periodId) {
+                clearReading(memberKey, 'highlights', periodId);
+                setHighlights(prev => { const next = {...prev}; delete next[periodId]; return next; });
+                generateHighlight(periodId);
+            }
+
+            async function generateAll() {
+                for (const p of highlightPeriods) {
+                    if (!highlights[p.id]) {
+                        await generateHighlight(p.id);
+                    }
+                }
+            }
+
+            const completedCount = highlightPeriods.filter(p => highlights[p.id]).length;
+
+            return (
+                <div className="space-y-6">
+                    <div className="cosmic-card p-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h4 className="text-xl font-bold gradient-text">🔑 Key Highlights</h4>
+                            <div className="flex items-center gap-3">
+                                <span className="text-xs text-gray-400">{completedCount}/{highlightPeriods.length} generated</span>
+                                {completedCount < highlightPeriods.length && (
+                                    <button onClick={generateAll} className="px-4 py-1.5 text-xs rounded-lg font-bold transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #d4af37, #f0d78c)', color: '#000000' }}>
+                                        ✨ Generate All
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-6">Lo más relevante para {member.name.split(' ')[0]} en cada horizonte temporal. Una vez generado, se mantiene fijo hasta que lo actualices.</p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                            {highlightPeriods.map(p => {
+                                const hasContent = !!highlights[p.id];
+                                const isLoading = loadingId === p.id;
+                                const isExpanded = expandedId === p.id;
+
+                                return (
+                                    <div key={p.id}
+                                        className="relative rounded-xl overflow-hidden transition-all duration-300"
+                                        style={{
+                                            background: 'linear-gradient(135deg, rgba(17,17,17,0.95), rgba(25,25,25,0.95))',
+                                            border: hasContent ? `1px solid ${p.color}40` : '1px solid rgba(212,175,55,0.15)',
+                                            boxShadow: hasContent ? `0 0 15px ${p.color}15` : 'none'
+                                        }}
+                                    >
+                                        <div className="p-4">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-lg">{p.icon}</span>
+                                                    <span className="font-bold text-sm" style={{ color: p.color }}>{p.label}</span>
+                                                </div>
+                                                {hasContent && (
+                                                    <div className="flex gap-1">
+                                                        <button onClick={() => setExpandedId(isExpanded ? null : p.id)} className="text-xs px-2 py-0.5 rounded bg-white/5 text-gray-400 hover:text-white transition-all">
+                                                            {isExpanded ? '▲' : '▼'}
+                                                        </button>
+                                                        <button onClick={() => refreshHighlight(p.id)} className="text-xs px-2 py-0.5 rounded bg-white/5 text-gray-400 hover:text-yellow-300 transition-all">
+                                                            🔄
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {isLoading && (
+                                                <div className="flex items-center gap-2 py-4 justify-center">
+                                                    <div className="w-5 h-5 border-2 border-yellow-300 border-t-transparent rounded-full animate-spin"></div>
+                                                    <span className="text-yellow-300 text-xs italic">Consultando...</span>
+                                                </div>
+                                            )}
+
+                                            {hasContent && !isLoading && (
+                                                <div className={`text-xs text-gray-300 leading-relaxed ${isExpanded ? '' : 'line-clamp-4'}`} style={{ whiteSpace: 'pre-wrap' }}>
+                                                    {highlights[p.id]}
+                                                </div>
+                                            )}
+
+                                            {!hasContent && !isLoading && (
+                                                <button onClick={() => generateHighlight(p.id)}
+                                                    className="w-full py-3 text-xs rounded-lg font-semibold text-gray-400 border border-dashed border-yellow-600/30 hover:border-yellow-400/60 hover:text-yellow-300 transition-all">
+                                                    Generar
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Summary radar chart */}
+                    {completedCount >= 3 && (
+                        <div className="cosmic-card p-6">
+                            <h4 className="text-lg font-bold gradient-text mb-4">Energy Overview</h4>
+                            <ResponsiveContainer width="100%" height={300}>
+                                <RadarChart data={highlightPeriods.map(p => {
+                                    const content = highlights[p.id] || '';
+                                    const energyMatch = content.match(/ENERGÍA:\s*\[?(\d+)/i);
+                                    return {
+                                        period: p.label,
+                                        energy: energyMatch ? parseInt(energyMatch[1]) : 5
+                                    };
+                                })}>
+                                    <PolarGrid stroke="rgba(212,175,55,0.2)" />
+                                    <PolarAngleAxis dataKey="period" stroke="#808080" style={{ fontSize: '11px' }} />
+                                    <PolarRadiusAxis angle={90} domain={[0, 10]} stroke="rgba(212,175,55,0.3)" />
+                                    <Radar name="Energy" dataKey="energy" stroke="#f0d78c" fill="#d4af37" fillOpacity={0.3} dot={{ fill: '#f0d78c', r: 3 }} />
+                                </RadarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
         function AIOracle({ member }) {
             const [question, setQuestion] = useState('');
             const [response, setResponse] = useState('');
@@ -1496,9 +1752,10 @@ Pregunta del consultante: ${question}`;
         // ==================== PERSON CONTAINER ====================
         function PersonContainer({ personKey }) {
             const member = familyMembers[personKey];
-            const [activeTab, setActiveTab] = useState('perfil');
+            const [activeTab, setActiveTab] = useState('highlights');
 
             const tabs = [
+                { id: 'highlights', label: '🔑 Key', component: KeyHighlights },
                 { id: 'perfil', label: 'Perfil', component: PerfilTab },
                 { id: 'natal', label: 'Natal Chart', component: NatalChartTab },
                 { id: 'vedic', label: 'Vedic', component: VedicAstrology },
