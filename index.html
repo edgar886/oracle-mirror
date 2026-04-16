@@ -5,48 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Oracle's Mirror - Boone Family Cosmic Portal</title>
 
-    <!-- Google Fonts -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:wght@600;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
     </style>
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Astronomy Engine (must load before React) -->
     <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
-
-    <!-- React -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-
-    <!-- Babel Standalone -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- PropTypes (required by Recharts UMD) -->
     <script src="https://unpkg.com/prop-types@15/prop-types.min.js"></script>
-
-    <!-- Recharts -->
     <script src="https://unpkg.com/recharts@2.1.16/umd/Recharts.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
+        *, *::before, *::after { box-sizing: border-box; }
+
+        html {
+            overflow-x: hidden;
+            max-width: 100vw;
         }
 
         body {
             margin: 0;
             padding: 0;
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #16213e 100%);
+            background: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #111111 100%);
             color: #e0e0e0;
             overflow-x: hidden;
+            max-width: 100vw;
         }
 
-        /* Starfield Animation */
+        #root {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+
         @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
         }
 
         .starfield-bg {
@@ -61,8 +57,8 @@
 
         .star {
             position: absolute;
-            width: 2px;
-            height: 2px;
+            width: 1.5px;
+            height: 1.5px;
             background: white;
             border-radius: 50%;
             animation: twinkle var(--duration) infinite;
@@ -73,9 +69,8 @@
             z-index: 1;
         }
 
-        /* Gold Shimmer */
         @keyframes shimmer {
-            0%, 100% { text-shadow: 0 0 10px rgba(212, 165, 116, 0.3); }
+            0%, 100% { text-shadow: 0 0 10px rgba(201, 168, 76, 0.3); }
             50% { text-shadow: 0 0 20px rgba(240, 215, 140, 0.8); }
         }
 
@@ -83,35 +78,30 @@
             animation: shimmer 3s infinite;
         }
 
-        /* Glow effect */
         .glow-gold {
-            box-shadow: 0 0 20px rgba(212, 165, 116, 0.6), inset 0 0 20px rgba(240, 215, 140, 0.2);
+            box-shadow: 0 0 20px rgba(201, 168, 76, 0.6), inset 0 0 20px rgba(240, 215, 140, 0.2);
         }
 
-        /* Pulsing animation */
         @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 10px rgba(212, 165, 116, 0.4); }
-            50% { box-shadow: 0 0 25px rgba(212, 165, 116, 0.8); }
+            0%, 100% { box-shadow: 0 0 10px rgba(201, 168, 76, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(201, 168, 76, 0.8); }
         }
 
         .pulse-glow {
             animation: pulse-glow 2s infinite;
         }
 
-        /* Text gradient */
         .gradient-text {
-            background: linear-gradient(135deg, #d4a574, #f0d78c);
+            background: linear-gradient(135deg, #d4af37, #f0d78c);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        /* Smooth transitions */
         .transition-smooth {
             transition: all 0.3s ease-in-out;
         }
 
-        /* Tab styling */
         .tab-button {
             position: relative;
             padding: 0.75rem 1.5rem;
@@ -126,81 +116,130 @@
 
         .tab-button.active {
             color: #f0d78c;
-            box-shadow: 0 2px 8px rgba(240, 215, 140, 0.4);
+            border-bottom: 2px solid #d4af37;
         }
 
         .tab-button:hover {
-            color: #d4a574;
+            color: #d4af37;
         }
 
-        /* Card styling */
         .cosmic-card {
-            background: linear-gradient(135deg, rgba(26, 10, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%);
-            border: 1px solid rgba(212, 165, 116, 0.3);
+            background: rgba(17, 17, 17, 0.9);
+            border: 1px solid rgba(201, 168, 76, 0.3);
             border-radius: 12px;
             backdrop-filter: blur(10px);
         }
 
         .cosmic-card:hover {
-            border-color: rgba(212, 165, 116, 0.6);
-            box-shadow: 0 8px 25px rgba(212, 165, 116, 0.2);
+            border-color: rgba(201, 168, 76, 0.6);
+            box-shadow: 0 8px 25px rgba(201, 168, 76, 0.2), inset 0 0 15px rgba(201, 168, 76, 0.05);
         }
 
-        /* Planet position */
         .planet-position {
             display: inline-block;
             padding: 0.5rem 1rem;
-            background: rgba(212, 165, 116, 0.1);
-            border: 1px solid rgba(212, 165, 116, 0.3);
+            background: rgba(201, 168, 76, 0.1);
+            border: 1px solid rgba(201, 168, 76, 0.3);
             border-radius: 20px;
             margin: 0.5rem 0.25rem;
             font-size: 0.85rem;
             white-space: nowrap;
         }
 
-        /* Moon phase styles */
         .moon-phase {
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #f0d78c, #1a0a2e);
+            background: radial-gradient(circle at 30% 30%, #f0d78c, #111111);
             box-shadow: 0 0 20px rgba(240, 215, 140, 0.4);
             margin: 0 auto;
         }
 
-        /* Scrollbar styling */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(26, 10, 46, 0.5);
+            background: rgba(17, 17, 17, 0.5);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(212, 165, 116, 0.5);
+            background: rgba(201, 168, 76, 0.5);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(212, 165, 116, 0.8);
+            background: rgba(201, 168, 76, 0.8);
         }
 
-        /* Responsive grid */
+        .main-content,
+        .main-content > * {
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+
+        svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        [style*="white-space: pre-wrap"] {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
         @media (max-width: 768px) {
             .tab-button {
-                padding: 0.5rem 1rem;
-                font-size: 0.85rem;
+                padding: 0.4rem 0.75rem;
+                font-size: 0.8rem;
             }
 
             h1 {
-                font-size: 2rem;
+                font-size: 1.75rem !important;
             }
 
             h2 {
-                font-size: 1.5rem;
+                font-size: 1.3rem;
             }
+
+            header .flex {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .planet-position {
+                font-size: 0.75rem;
+                padding: 0.35rem 0.7rem;
+            }
+
+            .cosmic-card {
+                padding: 1rem;
+                overflow-x: hidden;
+                word-wrap: break-word;
+            }
+        }
+
+        .natal-wheel-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .natal-wheel-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid rgba(201, 168, 76, 0.6);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #f0d78c;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 100;
+            box-shadow: 0 0 15px rgba(201, 168, 76, 0.3);
         }
     </style>
 </head>
@@ -212,17 +251,64 @@
         const { LineChart, Line, AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart } = window.Recharts;
 
         // ==================== STORAGE HELPERS ====================
+        function getAuthToken() {
+            return sessionStorage.getItem('oracle_token') || '';
+        }
+
         function saveReading(memberKey, section, period, text) {
             const key = `oracle_${memberKey}_${section}_${period}`;
             localStorage.setItem(key, JSON.stringify({ text, timestamp: Date.now() }));
+            const token = getAuthToken();
+            if (token) {
+                fetch('/api/readings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ memberKey, section, period, text })
+                }).catch(() => {});
+            }
         }
+
         function loadReading(memberKey, section, period) {
             const key = `oracle_${memberKey}_${section}_${period}`;
             const data = localStorage.getItem(key);
             return data ? JSON.parse(data) : null;
         }
+
         function clearReading(memberKey, section, period) {
             localStorage.removeItem(`oracle_${memberKey}_${section}_${period}`);
+            const token = getAuthToken();
+            if (token) {
+                fetch('/api/readings', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ memberKey, section, period })
+                }).catch(() => {});
+            }
+        }
+
+        async function syncReadingsFromServer(token) {
+            try {
+                const res = await fetch('/api/readings', {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) return;
+                const { readings } = await res.json();
+                if (!readings) return;
+                Object.entries(readings).forEach(([key, serverData]) => {
+                    const localRaw = localStorage.getItem(key);
+                    if (!localRaw) {
+                        localStorage.setItem(key, JSON.stringify(serverData));
+                    } else {
+                        const localData = JSON.parse(localRaw);
+                        if (serverData.timestamp > localData.timestamp) {
+                            localStorage.setItem(key, JSON.stringify(serverData));
+                        }
+                    }
+                });
+            } catch (e) {
+                console.log('Server sync unavailable, using localStorage only');
+            }
         }
 
         // ==================== DATA ====================
@@ -232,16 +318,16 @@
                 title: "The Architect of Vision",
                 born: "June 12, 1972",
                 birthTime: "11:50 AM",
-                birthPlace: "Torreón, Coahuila, México",
+                birthPlace: "TorreÃ³n, Coahuila, MÃ©xico",
                 western: {
-                    sun: { sign: "Gemini", degree: "21°52'" },
-                    moon: { sign: "Cancer", degree: "15°" },
-                    rising: { sign: "Virgo", degree: "8°" },
-                    mercury: { sign: "Gemini", degree: "28°" },
-                    venus: { sign: "Taurus", degree: "18°" },
-                    mars: { sign: "Cancer", degree: "4°" },
-                    jupiter: { sign: "Sagittarius", degree: "2°" },
-                    saturn: { sign: "Gemini", degree: "16°" }
+                    sun: { sign: "Gemini", degree: "21Â°52'" },
+                    moon: { sign: "Cancer", degree: "15Â°" },
+                    rising: { sign: "Virgo", degree: "8Â°" },
+                    mercury: { sign: "Gemini", degree: "28Â°" },
+                    venus: { sign: "Taurus", degree: "18Â°" },
+                    mars: { sign: "Cancer", degree: "4Â°" },
+                    jupiter: { sign: "Sagittarius", degree: "2Â°" },
+                    saturn: { sign: "Gemini", degree: "16Â°" }
                 },
                 vedic: {
                     lagna: "Leo (Simha)",
@@ -260,22 +346,22 @@
                 natalPositions: { sun: 81.87, moon: 105, mercury: 88, venus: 48, mars: 94, jupiter: 242, saturn: 76 }
             },
             vanessa: {
-                name: "Vanessa Sahagún Arellano",
+                name: "Vanessa SahagÃºn Arellano",
                 title: "The Nurturer Who Builds Civilizations",
                 born: "April 26, 1983",
-                birthPlace: "México",
+                birthPlace: "MÃ©xico",
                 western: {
-                    sun: { sign: "Taurus", degree: "6°" },
-                    moon: { sign: "—", degree: "—" }
+                    sun: { sign: "Taurus", degree: "6Â°" },
+                    moon: { sign: "â", degree: "â" }
                 },
-                vedic: { lagna: "—", moonSign: "—", nakshatra: "—", atmakaraka: "—" },
+                vedic: { lagna: "â", moonSign: "â", nakshatra: "â", atmakaraka: "â" },
                 numerology: { lifePath: 6, expression: 22, soulUrge: 6, personality: 7, maturity: 1, personalYear2026: 4 },
                 chinese: { animal: "Pig", element: "Water", fullSign: "Water Pig (Gui Hai)" },
                 tarot: "The Lovers",
                 iChing: { hex: 2, name: "Kun", meaning: "The Receptive" },
-                humanDesign: "—",
+                humanDesign: "â",
                 enneagram: "2/6",
-                mayan: "—",
+                mayan: "â",
                 monthlyEnergy2026: [5, 6, 7, 6, 7, 9, 8, 7, 9, 6, 5, 7],
                 natalPositions: { sun: 36, moon: 0 }
             },
@@ -285,17 +371,17 @@
                 born: "August 30, 2014",
                 birthPlace: "Earth",
                 western: {
-                    sun: { sign: "Virgo", degree: "7°" },
-                    moon: { sign: "—", degree: "—" }
+                    sun: { sign: "Virgo", degree: "7Â°" },
+                    moon: { sign: "â", degree: "â" }
                 },
-                vedic: { lagna: "—", moonSign: "—", nakshatra: "—", atmakaraka: "—" },
+                vedic: { lagna: "â", moonSign: "â", nakshatra: "â", atmakaraka: "â" },
                 numerology: { lifePath: 9, expression: 7, soulUrge: 9, personality: 7, maturity: 7, personalYear2026: 3 },
                 chinese: { animal: "Horse", element: "Wood", fullSign: "Wood Horse (Jia Wu)" },
                 tarot: "Hermit + Moon (Moon resonant)",
                 iChing: { hex: 22, name: "Bi", meaning: "Grace" },
-                humanDesign: "—",
+                humanDesign: "â",
                 enneagram: "4w5",
-                mayan: "—",
+                mayan: "â",
                 monthlyEnergy2026: [7, 6, 8, 7, 6, 7, 8, 7, 6, 8, 7, 9],
                 natalPositions: { sun: 157, moon: 0 }
             },
@@ -305,17 +391,17 @@
                 born: "August 30, 2014",
                 birthPlace: "Earth",
                 western: {
-                    sun: { sign: "Virgo", degree: "7°" },
-                    moon: { sign: "—", degree: "—" }
+                    sun: { sign: "Virgo", degree: "7Â°" },
+                    moon: { sign: "â", degree: "â" }
                 },
-                vedic: { lagna: "—", moonSign: "—", nakshatra: "—", atmakaraka: "—" },
+                vedic: { lagna: "â", moonSign: "â", nakshatra: "â", atmakaraka: "â" },
                 numerology: { lifePath: 9, expression: 7, soulUrge: 9, personality: 7, maturity: 7, personalYear2026: 3 },
                 chinese: { animal: "Horse", element: "Wood", fullSign: "Wood Horse (Jia Wu)" },
                 tarot: "Hermit + Moon (Hermit resonant)",
                 iChing: { hex: 52, name: "Gen", meaning: "Mountain / Stillness" },
-                humanDesign: "—",
+                humanDesign: "â",
                 enneagram: "5w4",
-                mayan: "—",
+                mayan: "â",
                 monthlyEnergy2026: [7, 6, 8, 7, 6, 7, 8, 7, 6, 8, 7, 9],
                 natalPositions: { sun: 157, moon: 0 }
             },
@@ -325,18 +411,18 @@
                 born: "August 30, 2014",
                 birthPlace: "Earth",
                 western: {
-                    sun: { sign: "Virgo", degree: "7°" },
-                    moon: { sign: "—", degree: "—" },
-                    mars: { sign: "Scorpio", degree: "—" }
+                    sun: { sign: "Virgo", degree: "7Â°" },
+                    moon: { sign: "â", degree: "â" },
+                    mars: { sign: "Scorpio", degree: "â" }
                 },
-                vedic: { lagna: "—", moonSign: "—", nakshatra: "—", atmakaraka: "—" },
+                vedic: { lagna: "â", moonSign: "â", nakshatra: "â", atmakaraka: "â" },
                 numerology: { lifePath: 9, expression: 8, soulUrge: 9, personality: 8, maturity: 8, personalYear2026: 3 },
                 chinese: { animal: "Horse", element: "Wood", fullSign: "Wood Horse (Jia Wu)" },
                 tarot: "Hermit + Moon",
                 iChing: { hex: 34, name: "Da Zhuang", meaning: "Great Power" },
-                humanDesign: "—",
+                humanDesign: "â",
                 enneagram: "Type 8",
-                mayan: "—",
+                mayan: "â",
                 monthlyEnergy2026: [8, 7, 9, 8, 7, 8, 9, 8, 7, 9, 8, 7],
                 natalPositions: { sun: 157, moon: 0, mars: 224 }
             },
@@ -346,38 +432,38 @@
                 born: "August 21, 2016",
                 birthPlace: "Earth",
                 western: {
-                    sun: { sign: "Leo", degree: "29°" },
-                    moon: { sign: "—", degree: "—" }
+                    sun: { sign: "Leo", degree: "29Â°" },
+                    moon: { sign: "â", degree: "â" }
                 },
-                vedic: { lagna: "—", moonSign: "—", nakshatra: "—", atmakaraka: "—" },
+                vedic: { lagna: "â", moonSign: "â", nakshatra: "â", atmakaraka: "â" },
                 numerology: { lifePath: 2, expression: 6, soulUrge: 5, personality: 1, maturity: 8, personalYear2026: 3 },
                 chinese: { animal: "Monkey", element: "Fire", fullSign: "Fire Monkey (Bing Shen)" },
                 tarot: "Judgment + High Priestess",
                 iChing: { hex: 61, name: "Zhong Fu", meaning: "Inner Truth" },
-                humanDesign: "—",
+                humanDesign: "â",
                 enneagram: "7w6",
-                mayan: "—",
+                mayan: "â",
                 monthlyEnergy2026: [6, 7, 8, 7, 8, 7, 6, 8, 7, 8, 9, 7],
                 natalPositions: { sun: 149, moon: 0 }
             },
             mikel: {
                 name: "Mikel Boone",
-                title: "The Awaited One — Soul in Transit",
+                title: "The Awaited One â Soul in Transit",
                 born: "September 19, 2026 (estimated)",
                 birthTime: "12:00 PM (estimated)",
-                birthPlace: "Monterrey, México (estimated)",
+                birthPlace: "Monterrey, MÃ©xico (estimated)",
                 western: {
-                    sun: { sign: "Virgo", degree: "26°" },
-                    moon: { sign: "—", degree: "—" }
+                    sun: { sign: "Virgo", degree: "26Â°" },
+                    moon: { sign: "â", degree: "â" }
                 },
-                vedic: { lagna: "—", moonSign: "—", nakshatra: "Chitra (estimated)", atmakaraka: "—" },
+                vedic: { lagna: "â", moonSign: "â", nakshatra: "Chitra (estimated)", atmakaraka: "â" },
                 numerology: { lifePath: 2, expression: 5, soulUrge: 3, personality: 2, maturity: 7, personalYear2026: 1 },
                 chinese: { animal: "Horse", element: "Fire", fullSign: "Fire Horse (Bing Wu)" },
                 tarot: "The High Priestess",
                 iChing: { hex: 3, name: "Zhun", meaning: "Difficulty at the Beginning" },
-                humanDesign: "— (pending birth)",
-                enneagram: "— (pending)",
-                mayan: "— (pending)",
+                humanDesign: "â (pending birth)",
+                enneagram: "â (pending)",
+                mayan: "â (pending)",
                 monthlyEnergy2026: [0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7],
                 natalPositions: { sun: 176, moon: 0 },
                 isPending: true
@@ -386,18 +472,29 @@
 
         // ==================== ASTRONOMICAL CALCULATIONS ====================
         const ZODIAC_SIGNS = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
-        const ZODIAC_SYMBOLS = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
+        const ZODIAC_SYMBOLS = ['â', 'â', 'â', 'â', 'â', 'â', 'â', 'â', 'â', 'â', 'â', 'â'];
+        const ZODIAC_ELEMENTS = {
+            'Aries': 'Fire', 'Taurus': 'Earth', 'Gemini': 'Air', 'Cancer': 'Water',
+            'Leo': 'Fire', 'Virgo': 'Earth', 'Libra': 'Air', 'Scorpio': 'Water',
+            'Sagittarius': 'Fire', 'Capricorn': 'Earth', 'Aquarius': 'Air', 'Pisces': 'Water'
+        };
+        const ELEMENT_COLORS = {
+            'Fire': '#ff6b6b',
+            'Earth': '#51cf66',
+            'Air': '#74c0fc',
+            'Water': '#06b6d4'
+        };
         const PLANET_SYMBOLS = {
-            'Sun': '☉',
-            'Moon': '☽',
-            'Mercury': '☿',
-            'Venus': '♀',
-            'Mars': '♂',
-            'Jupiter': '♃',
-            'Saturn': '♄',
-            'Uranus': '♅',
-            'Neptune': '♆',
-            'Pluto': '♇'
+            'Sun': 'â',
+            'Moon': 'â½',
+            'Mercury': 'â¿',
+            'Venus': 'â',
+            'Mars': 'â',
+            'Jupiter': 'â',
+            'Saturn': 'â',
+            'Uranus': 'â',
+            'Neptune': 'â',
+            'Pluto': 'â'
         };
 
         function getLongitudeToZodiac(longitude) {
@@ -418,14 +515,14 @@
                     const sunEcl = Astronomy.SunPosition(now);
                     positions.sun = getLongitudeToZodiac(sunEcl.elon);
                 } catch (e) {
-                    positions.sun = { sign: 'Aries', symbol: '♈', degree: '0.00', longitude: 0 };
+                    positions.sun = { sign: 'Aries', symbol: 'â', degree: '0.00', longitude: 0 };
                 }
 
                 try {
                     const moonEcl = Astronomy.EclipticGeoMoon(now);
                     positions.moon = getLongitudeToZodiac(moonEcl.lon);
                 } catch (e) {
-                    positions.moon = { sign: 'Cancer', symbol: '♋', degree: '0.00', longitude: 0 };
+                    positions.moon = { sign: 'Cancer', symbol: 'â', degree: '0.00', longitude: 0 };
                 }
 
                 const planets = ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto'];
@@ -435,7 +532,7 @@
                         const ecl = Astronomy.Ecliptic(vector);
                         positions[planet.toLowerCase()] = getLongitudeToZodiac(ecl.elon);
                     } catch (e) {
-                        positions[planet.toLowerCase()] = { sign: 'Aries', symbol: '♈', degree: '0.00', longitude: 0 };
+                        positions[planet.toLowerCase()] = { sign: 'Aries', symbol: 'â', degree: '0.00', longitude: 0 };
                     }
                 });
 
@@ -472,7 +569,7 @@
                 if (!container) return;
                 container.innerHTML = '';
 
-                for (let i = 0; i < 200; i++) {
+                for (let i = 0; i < 150; i++) {
                     const star = document.createElement('div');
                     star.className = 'star';
                     star.style.left = Math.random() * 100 + '%';
@@ -511,32 +608,32 @@
                         <div className="text-center">
                             <p className="text-sm text-gray-400 mb-2">Moon Phase</p>
                             <div className="moon-phase mb-2"></div>
-                            <p className="font-semibold text-yellow-400">{moonPhase.phaseName}</p>
+                            <p className="font-semibold text-yellow-300">{moonPhase.phaseName}</p>
                             <p className="text-xs text-gray-400">{moonPhase.phasePercent}%</p>
                         </div>
 
                         <div className="text-center">
                             <p className="text-sm text-gray-400 mb-2">Current Date</p>
-                            <p className="font-semibold text-lg text-yellow-400">{new Date().toLocaleDateString()}</p>
+                            <p className="font-semibold text-lg text-yellow-300">{new Date().toLocaleDateString()}</p>
                             <p className="text-xs text-gray-400">Last updated: {lastUpdated.toLocaleTimeString()}</p>
                         </div>
 
                         <div className="text-center">
                             <p className="text-sm text-gray-400 mb-2">Planetary Hour</p>
-                            <p className="font-semibold text-yellow-400">Variable</p>
+                            <p className="font-semibold text-yellow-300">Variable</p>
                             <p className="text-xs text-gray-400">Check ephemeris</p>
                         </div>
                     </div>
 
                     <div className="border-t border-yellow-600/30 pt-6">
-                        <p className="text-sm font-semibold mb-4 text-yellow-400">Current Planetary Positions</p>
+                        <p className="text-sm font-semibold mb-4 text-yellow-300">Current Planetary Positions</p>
                         <div className="flex flex-wrap gap-2">
                             {planetList.map(planet => {
                                 const pos = positions[planet];
                                 const planetName = planet.charAt(0).toUpperCase() + planet.slice(1);
                                 return (
                                     <div key={planet} className="planet-position">
-                                        {PLANET_SYMBOLS[planetName]} {pos?.sign} {pos?.degree}°
+                                        {PLANET_SYMBOLS[planetName]} {pos?.sign} {pos?.degree}Â°
                                     </div>
                                 );
                             })}
@@ -546,99 +643,197 @@
             );
         }
 
-        // ==================== FAMILY SELECTOR ====================
-        function FamilySelector({ selected, onSelect }) {
-            const members = Object.keys(familyMembers);
+        // ==================== ENHANCED NATAL CHART WHEEL ====================
+        function NatalChartWheel({ member }) {
+            const [hoveredPlanet, setHoveredPlanet] = useState(null);
+            const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+
+            const cx = 250, cy = 250, outerR = 220, innerR = 150, planetR = 190;
+            const svgSize = 500;
+
+            const getAspects = (positions) => {
+                const aspects = [];
+                const keys = Object.keys(positions).filter(k => positions[k] > 0);
+                for (let i = 0; i < keys.length; i++) {
+                    for (let j = i + 1; j < keys.length; j++) {
+                        const lon1 = positions[keys[i]];
+                        const lon2 = positions[keys[j]];
+                        let diff = Math.abs(lon2 - lon1);
+                        if (diff > 180) diff = 360 - diff;
+
+                        let aspectType = null;
+                        if (diff < 8 || diff > 352) aspectType = { name: 'Conjunction', color: '#d4af37', tolerance: 8 };
+                        else if (Math.abs(diff - 60) < 6) aspectType = { name: 'Sextile', color: '#4da6ff', tolerance: 6 };
+                        else if (Math.abs(diff - 90) < 6) aspectType = { name: 'Square', color: '#ff3333', tolerance: 6 };
+                        else if (Math.abs(diff - 120) < 8) aspectType = { name: 'Trine', color: '#33cc33', tolerance: 8 };
+                        else if (Math.abs(diff - 180) < 8) aspectType = { name: 'Opposition', color: '#3399ff', tolerance: 8 };
+
+                        if (aspectType) {
+                            aspects.push({
+                                p1: keys[i],
+                                p2: keys[j],
+                                lon1,
+                                lon2,
+                                ...aspectType
+                            });
+                        }
+                    }
+                }
+                return aspects;
+            };
+
+            const aspects = getAspects(member.natalPositions || {});
+
+            const handlePlanetHover = (planet, e) => {
+                setHoveredPlanet(planet);
+                const rect = e.currentTarget.getBoundingClientRect();
+                setTooltipPos({
+                    x: rect.left + rect.width / 2 + 30,
+                    y: rect.top - 20
+                });
+            };
 
             return (
-                <div className="flex flex-wrap gap-4 justify-center mb-8">
-                    {members.map(key => {
-                        const member = familyMembers[key];
-                        const sunSign = member.western.sun.sign;
-                        const isActive = selected === key;
+                <div className="natal-wheel-container">
+                    <svg viewBox={`0 0 ${svgSize} ${svgSize}`} className="w-full" style={{ minHeight: '500px' }}>
+                        <defs>
+                            <radialGradient id="chartBg" cx="50%" cy="50%">
+                                <stop offset="0%" stopColor="#1a1a1a" />
+                                <stop offset="100%" stopColor="#000000" />
+                            </radialGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="2" result="blur" />
+                                <feMerge>
+                                    <feMergeNode in="blur" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                        </defs>
 
-                        return (
-                            <button
-                                key={key}
-                                onClick={() => onSelect(key)}
-                                className={`relative w-20 h-20 rounded-full transition-all ${isActive ? 'glow-gold scale-110' : 'hover:scale-105'}`}
-                                style={{
-                                    background: isActive ? 'linear-gradient(135deg, rgba(212, 165, 116, 0.3), rgba(240, 215, 140, 0.1))' : 'linear-gradient(135deg, rgba(26, 10, 46, 0.8), rgba(22, 33, 62, 0.8))',
-                                    border: isActive ? '2px solid #d4a574' : '1px solid rgba(212, 165, 116, 0.3)',
-                                    opacity: member.isPending ? 0.7 : 1
-                                }}
-                            >
-                                <div className="w-full h-full flex flex-col items-center justify-center">
-                                    <div className="text-2xl">{member.isPending ? '✨' : ZODIAC_SYMBOLS[ZODIAC_SIGNS.indexOf(sunSign)]}</div>
-                                    <div className="text-xs text-yellow-400 font-semibold mt-1">{member.name.split(' ')[0]}</div>
-                                </div>
-                            </button>
-                        );
-                    })}
-                    <button
-                        onClick={() => onSelect('family')}
-                        className={`relative w-20 h-20 rounded-full transition-all ${selected === 'family' ? 'glow-gold scale-110' : 'hover:scale-105'}`}
-                        style={{
-                            background: selected === 'family' ? 'linear-gradient(135deg, rgba(212, 165, 116, 0.3), rgba(240, 215, 140, 0.1))' : 'linear-gradient(135deg, rgba(26, 10, 46, 0.8), rgba(22, 33, 62, 0.8))',
-                            border: selected === 'family' ? '2px solid #d4a574' : '1px solid rgba(212, 165, 116, 0.3)'
-                        }}
-                    >
-                        <div className="w-full h-full flex flex-col items-center justify-center">
-                            <div className="text-2xl">👨‍👩‍👧‍👦</div>
-                            <div className="text-xs text-yellow-400 font-semibold mt-1">Familia</div>
+                        <circle cx={cx} cy={cy} r={outerR} fill="url(#chartBg)" stroke="#d4af37" strokeWidth="2" opacity="0.9" />
+                        <circle cx={cx} cy={cy} r={innerR} fill="none" stroke="rgba(212,175,55,0.3)" strokeWidth="1" />
+                        <circle cx={cx} cy={cy} r={outerR - 10} fill="none" stroke="rgba(212,175,55,0.2)" strokeWidth="0.5" />
+
+                        {ZODIAC_SIGNS.map((sign, i) => {
+                            const angle1 = (i * 30 - 90) * Math.PI / 180;
+                            const angle2 = ((i + 1) * 30 - 90) * Math.PI / 180;
+                            const midAngle = ((i * 30 + 15) - 90) * Math.PI / 180;
+                            const labelR = (outerR + innerR) / 2;
+                            const element = ZODIAC_ELEMENTS[sign];
+                            const elemColor = ELEMENT_COLORS[element];
+
+                            return (
+                                <g key={sign}>
+                                    <path
+                                        d={`M ${cx + innerR * Math.cos(angle1)} ${cy + innerR * Math.sin(angle1)} L ${cx + outerR * Math.cos(angle1)} ${cy + outerR * Math.sin(angle1)}`}
+                                        stroke="rgba(212,175,55,0.4)"
+                                        strokeWidth="1"
+                                    />
+                                    <text
+                                        x={cx + labelR * Math.cos(midAngle)}
+                                        y={cy + labelR * Math.sin(midAngle)}
+                                        textAnchor="middle"
+                                        dominantBaseline="central"
+                                        fill={elemColor}
+                                        fontSize="16"
+                                        fontWeight="bold"
+                                    >
+                                        {ZODIAC_SYMBOLS[i]}
+                                    </text>
+                                </g>
+                            );
+                        })}
+
+                        {aspects.map((aspect, idx) => {
+                            const ang1 = (aspect.lon1 - 90) * Math.PI / 180;
+                            const ang2 = (aspect.lon2 - 90) * Math.PI / 180;
+                            const x1 = cx + planetR * Math.cos(ang1);
+                            const y1 = cy + planetR * Math.sin(ang1);
+                            const x2 = cx + planetR * Math.cos(ang2);
+                            const y2 = cy + planetR * Math.sin(ang2);
+                            return (
+                                <line
+                                    key={`aspect-${idx}`}
+                                    x1={x1}
+                                    y1={y1}
+                                    x2={x2}
+                                    y2={y2}
+                                    stroke={aspect.color}
+                                    strokeWidth="1.5"
+                                    opacity="0.4"
+                                    strokeDasharray={aspect.name === 'Conjunction' ? '0' : '3,3'}
+                                />
+                            );
+                        })}
+
+                        {Object.entries(member.natalPositions || {})
+                            .filter(([, lon]) => lon > 0)
+                            .map(([planet, lon]) => {
+                                const angle = (lon - 90) * Math.PI / 180;
+                                const px = cx + planetR * Math.cos(angle);
+                                const py = cy + planetR * Math.sin(angle);
+                                const pName = planet.charAt(0).toUpperCase() + planet.slice(1);
+
+                                return (
+                                    <g key={planet} filter="url(#glow)">
+                                        <circle
+                                            cx={px}
+                                            cy={py}
+                                            r="16"
+                                            fill="rgba(0,0,0,0.95)"
+                                            stroke="#d4af37"
+                                            strokeWidth="2"
+                                            onMouseEnter={(e) => handlePlanetHover(planet, e)}
+                                            onMouseLeave={() => setHoveredPlanet(null)}
+                                            style={{ cursor: 'pointer' }}
+                                        />
+                                        <text
+                                            x={px}
+                                            y={py}
+                                            textAnchor="middle"
+                                            dominantBaseline="central"
+                                            fill="#f0d78c"
+                                            fontSize="13"
+                                            fontWeight="bold"
+                                        >
+                                            {PLANET_SYMBOLS[pName] || 'â'}
+                                        </text>
+                                    </g>
+                                );
+                            })}
+
+                        <text
+                            x={cx}
+                            y={cy - 5}
+                            textAnchor="middle"
+                            fill="#d4af37"
+                            fontSize="12"
+                            fontWeight="bold"
+                        >
+                            {member.name.split(' ')[0]}
+                        </text>
+                        <text
+                            x={cx}
+                            y={cy + 15}
+                            textAnchor="middle"
+                            fill="#b0b0b0"
+                            fontSize="10"
+                        >
+                            {member.western.sun.sign} {member.western.sun.degree}
+                        </text>
+                    </svg>
+
+                    {hoveredPlanet && (
+                        <div className="natal-wheel-tooltip" style={{ left: tooltipPos.x, top: tooltipPos.y }}>
+                            <div className="font-bold">{hoveredPlanet}</div>
+                            <div>{member.western[hoveredPlanet]?.sign} {member.western[hoveredPlanet]?.degree}</div>
                         </div>
-                    </button>
+                    )}
                 </div>
             );
         }
 
-        // ==================== NATAL CHART WHEEL ====================
-        function NatalChartWheel({ member }) {
-            const cx = 200, cy = 200, outerR = 180, innerR = 130, planetR = 155;
-            const signColors = ['#ff6b6b','#51cf66','#fcc419','#74c0fc','#ff922b','#51cf66','#f06595','#74c0fc','#ff922b','#868e96','#74c0fc','#ff6b6b'];
-
-            return (
-                <svg viewBox="0 0 400 400" className="w-full max-w-md mx-auto">
-                    <defs>
-                        <radialGradient id="chartBg" cx="50%" cy="50%"><stop offset="0%" stopColor="#1a0a2e"/><stop offset="100%" stopColor="#0a0a1a"/></radialGradient>
-                        <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                    </defs>
-                    <circle cx={cx} cy={cy} r={outerR} fill="url(#chartBg)" stroke="#d4a574" strokeWidth="1" opacity="0.8"/>
-                    <circle cx={cx} cy={cy} r={innerR} fill="none" stroke="rgba(212,165,116,0.3)" strokeWidth="0.5"/>
-                    {ZODIAC_SIGNS.map((sign, i) => {
-                        const angle1 = (i * 30 - 90) * Math.PI / 180;
-                        const angle2 = ((i+1) * 30 - 90) * Math.PI / 180;
-                        const midAngle = ((i * 30 + 15) - 90) * Math.PI / 180;
-                        const labelR = (outerR + innerR) / 2;
-                        return (
-                            <g key={sign}>
-                                <line x1={cx + innerR*Math.cos(angle1)} y1={cy + innerR*Math.sin(angle1)} x2={cx + outerR*Math.cos(angle1)} y2={cy + outerR*Math.sin(angle1)} stroke="rgba(212,165,116,0.3)" strokeWidth="0.5"/>
-                                <text x={cx + labelR*Math.cos(midAngle)} y={cy + labelR*Math.sin(midAngle)} textAnchor="middle" dominantBaseline="central" fill={signColors[i]} fontSize="14" fontWeight="bold">{ZODIAC_SYMBOLS[i]}</text>
-                            </g>
-                        );
-                    })}
-                    {Object.entries(member.natalPositions || {}).filter(([,lon]) => lon > 0).map(([planet, lon]) => {
-                        const angle = (lon - 90) * Math.PI / 180;
-                        const px = cx + planetR * Math.cos(angle);
-                        const py = cy + planetR * Math.sin(angle);
-                        const pName = planet.charAt(0).toUpperCase() + planet.slice(1);
-                        const innerPx = cx + (innerR - 15) * Math.cos(angle);
-                        const innerPy = cy + (innerR - 15) * Math.sin(angle);
-                        return (
-                            <g key={planet} filter="url(#glow)">
-                                <line x1={cx + innerR*Math.cos(angle)} y1={cy + innerR*Math.sin(angle)} x2={innerPx} y2={innerPy} stroke="#f0d78c" strokeWidth="0.5" opacity="0.5"/>
-                                <circle cx={px} cy={py} r="12" fill="rgba(26,10,46,0.9)" stroke="#d4a574" strokeWidth="1"/>
-                                <text x={px} y={py} textAnchor="middle" dominantBaseline="central" fill="#f0d78c" fontSize="11">{PLANET_SYMBOLS[pName] || '⊕'}</text>
-                            </g>
-                        );
-                    })}
-                    <text x={cx} y={cy - 10} textAnchor="middle" fill="#d4a574" fontSize="10" fontWeight="bold">{member.name.split(' ')[0]}</text>
-                    <text x={cx} y={cy + 8} textAnchor="middle" fill="#a0a0a0" fontSize="8">{member.western.sun.sign} {member.western.sun.degree}</text>
-                </svg>
-            );
-        }
-
-        // ==================== ENHANCED INTERPRET BUTTON WITH STORAGE ====================
+        // ==================== INTERPRET BUTTON ====================
         function InterpretButton({ member, memberKey, section, period, system, prompt, title }) {
             const [text, setText] = useState(() => {
                 const stored = loadReading(memberKey, section, period);
@@ -659,12 +854,12 @@
                         body: JSON.stringify({ prompt, model: 'claude-sonnet-4-20250514', max_tokens: 1500 })
                     });
                     const data = await resp.json();
-                    const result = data.error ? ('Error: ' + data.error) : (data.content?.[0]?.text || 'No se pudo obtener la interpretación.');
+                    const result = data.error ? ('Error: ' + data.error) : (data.content?.[0]?.text || 'No se pudo obtener la interpretaciÃ³n.');
                     setText(result);
                     saveReading(memberKey, section, period, result);
                     setIsStoredReading(true);
                 } catch(e) {
-                    const msg = 'Error de conexión: ' + e.message;
+                    const msg = 'Error de conexiÃ³n: ' + e.message;
                     setText(msg);
                 }
                 setLoading(false);
@@ -679,23 +874,23 @@
 
             return (
                 <div className="cosmic-card p-6 mt-6">
-                    <h4 className="text-xl font-bold gradient-text mb-4">🔮 {title}</h4>
+                    <h4 className="text-xl font-bold gradient-text mb-4">ð® {title}</h4>
                     {!text && !loading && (
-                        <button onClick={interpret} className="w-full px-6 py-3 rounded-lg font-bold transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #d4a574, #f0d78c)', color: '#1a0a2e' }}>
-                            ✨ Interpretar ✨
+                        <button onClick={interpret} className="w-full px-6 py-3 rounded-lg font-bold transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #d4af37, #f0d78c)', color: '#000000' }}>
+                            â¨ Interpretar â¨
                         </button>
                     )}
                     {loading && (
                         <div className="flex flex-col items-center gap-3 py-6">
-                            <div className="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
-                            <p className="text-yellow-400 italic">El Oráculo interpreta...</p>
+                            <div className="w-10 h-10 border-4 border-yellow-300 border-t-transparent rounded-full animate-spin"></div>
+                            <p className="text-yellow-300 italic">El OrÃ¡culo interpreta...</p>
                         </div>
                     )}
                     {text && (
                         <div>
                             {isStoredReading && (
                                 <button onClick={refreshReading} className="mb-4 px-4 py-2 text-sm rounded-lg bg-yellow-600/20 text-yellow-300 border border-yellow-400/50 hover:bg-yellow-600/40 transition-all">
-                                    🔄 Actualizar
+                                    ð Actualizar
                                 </button>
                             )}
                             <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}><p className="text-gray-300">{text}</p></div>
@@ -714,10 +909,10 @@
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                             {Object.entries(member.western).map(([planet, pos]) => (
                                 <div key={planet} className="p-4 bg-black/30 rounded-lg border border-yellow-600/20 text-center hover:border-yellow-400/50 transition-all">
-                                    <div className="text-2xl mb-1">{PLANET_SYMBOLS[planet.charAt(0).toUpperCase() + planet.slice(1)] || '⊕'}</div>
+                                    <div className="text-2xl mb-1">{PLANET_SYMBOLS[planet.charAt(0).toUpperCase() + planet.slice(1)] || 'â'}</div>
                                     <p className="text-xs text-gray-400 capitalize mb-1">{planet}</p>
                                     <p className="font-bold text-white">{pos.sign}</p>
-                                    <p className="text-xs text-yellow-400">{pos.degree}</p>
+                                    <p className="text-xs text-yellow-300">{pos.degree}</p>
                                 </div>
                             ))}
                         </div>
@@ -735,24 +930,24 @@
                         period="general"
                         system="Western Astrology"
                         title="Natal Chart Interpretation"
-                        prompt={`Eres un astrólogo experto. Interpreta la carta natal de ${member.name} (nacido ${member.born} en ${member.birthPlace}).
+                        prompt={`Eres un astrÃ³logo experto. Interpreta la carta natal de ${member.name} (nacido ${member.born} en ${member.birthPlace}).
 
 Posiciones: ${Object.entries(member.western).map(([p, pos]) => `${p}: ${pos.sign} ${pos.degree}`).join(', ')}
 
-Escribe en español. Da una interpretación profunda pero accesible:
-1. **Esencia Solar**: Qué significa su sol en ${member.western.sun.sign}
+Escribe en espaÃ±ol. Da una interpretaciÃ³n profunda pero accesible:
+1. **Esencia Solar**: QuÃ© significa su sol en ${member.western.sun.sign}
 2. **Mundo Emocional**: Su luna en ${member.western.moon?.sign || 'desconocida'}
 3. **Aspectos Destacados**: Patrones notables entre sus planetas
-4. **Dones y Desafíos**: Lo que la carta revela
+4. **Dones y DesafÃ­os**: Lo que la carta revela
 5. **Mensaje del Cosmos**: Un consejo basado en su carta
 
-Usa un tono místico pero claro. Máximo 800 palabras.`}
+Usa un tono mÃ­stico pero claro. MÃ¡ximo 800 palabras.`}
                     />
                 </div>
             );
         }
 
-        // ==================== PERFIL TAB (TWO COLUMNS) ====================
+        // ==================== PERFIL TAB ====================
         function PerfilTab({ member, memberKey }) {
             const [overview, setOverview] = useState(() => {
                 const stored = loadReading(memberKey, 'perfil', 'overview');
@@ -767,7 +962,7 @@ Usa un tono místico pero claro. Máximo 800 palabras.`}
             async function generateOverview() {
                 setOverviewLoading(true);
                 try {
-                    const prompt = `Eres un astrólogo sabio. Haz una interpretación GENERAL y ACCESIBLE de ${member.name}, sin usar lenguaje técnico. Integra todos sus sistemas: Astrología occidental (Sol ${member.western.sun.sign}, Luna ${member.western.moon?.sign}, Ascendente ${member.western.rising?.sign}), Astrología china (${member.chinese.fullSign}), Numerología (camino de vida ${member.numerology.lifePath}), Tarot (${member.tarot}), I Ching (Hexagrama ${member.iChing.hex}), Enneagrama (${member.enneagram}). Escribe como si le explicaras a un amigo quién es esta persona en esencia, sus fortalezas, desafíos, y potencial. Máximo 800 palabras. En español.`;
+                    const prompt = `Eres un astrÃ³logo sabio. Haz una interpretaciÃ³n GENERAL y ACCESIBLE de ${member.name}, sin usar lenguaje tÃ©cnico. Integra todos sus sistemas: AstrologÃ­a occidental (Sol ${member.western.sun.sign}, Luna ${member.western.moon?.sign}, Ascendente ${member.western.rising?.sign}), AstrologÃ­a china (${member.chinese.fullSign}), NumerologÃ­a (camino de vida ${member.numerology.lifePath}), Tarot (${member.tarot}), I Ching (Hexagrama ${member.iChing.hex}), Enneagrama (${member.enneagram}). Escribe como si le explicaras a un amigo quiÃ©n es esta persona en esencia, sus fortalezas, desafÃ­os, y potencial. MÃ¡ximo 800 palabras. En espaÃ±ol.`;
                     const resp = await fetch('/api/interpret', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -794,11 +989,10 @@ Usa un tono místico pero claro. Máximo 800 palabras.`}
             return (
                 <div className="space-y-6">
                     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                        {/* Left column: 60% - Overview */}
                         <div className="lg:col-span-3 space-y-6">
                             <div className="cosmic-card p-8">
                                 <h3 className="text-3xl font-bold gradient-text mb-2">{member.name}</h3>
-                                <p className="text-yellow-400 text-lg mb-4">{member.title}</p>
+                                <p className="text-yellow-300 text-lg mb-4">{member.title}</p>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                     <div>
                                         <p className="text-gray-400">Born:</p>
@@ -812,23 +1006,23 @@ Usa un tono místico pero claro. Máximo 800 palabras.`}
                             </div>
 
                             <div className="cosmic-card p-6">
-                                <h4 className="text-xl font-bold gradient-text mb-4">🔮 General Interpretation</h4>
+                                <h4 className="text-xl font-bold gradient-text mb-4">ð® General Interpretation</h4>
                                 {!overview && !overviewLoading && (
-                                    <button onClick={generateOverview} className="w-full px-6 py-3 rounded-lg font-bold transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #d4a574, #f0d78c)', color: '#1a0a2e' }}>
-                                        ✨ Generate Interpretation ✨
+                                    <button onClick={generateOverview} className="w-full px-6 py-3 rounded-lg font-bold transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #d4af37, #f0d78c)', color: '#000000' }}>
+                                        â¨ Generate Interpretation â¨
                                     </button>
                                 )}
                                 {overviewLoading && (
                                     <div className="flex flex-col items-center gap-3 py-6">
-                                        <div className="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
-                                        <p className="text-yellow-400 italic">El Oráculo interpreta...</p>
+                                        <div className="w-10 h-10 border-4 border-yellow-300 border-t-transparent rounded-full animate-spin"></div>
+                                        <p className="text-yellow-300 italic">El OrÃ¡culo interpreta...</p>
                                     </div>
                                 )}
                                 {overview && (
                                     <div>
                                         {isStoredOverview && (
                                             <button onClick={refreshOverview} className="mb-4 px-4 py-2 text-sm rounded-lg bg-yellow-600/20 text-yellow-300 border border-yellow-400/50 hover:bg-yellow-600/40 transition-all">
-                                                🔄 Actualizar
+                                                ð Actualizar
                                             </button>
                                         )}
                                         <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}><p className="text-gray-300">{overview}</p></div>
@@ -837,7 +1031,6 @@ Usa un tono místico pero claro. Máximo 800 palabras.`}
                             </div>
                         </div>
 
-                        {/* Right column: 40% - Transits */}
                         <div className="lg:col-span-2">
                             <TransitsTab member={member} memberKey={memberKey} />
                         </div>
@@ -846,11 +1039,10 @@ Usa un tono místico pero claro. Máximo 800 palabras.`}
             );
         }
 
-        // ==================== TRANSITS TAB (MULTI-TIMEFRAME) ====================
+        // ==================== TRANSITS TAB ====================
         function TransitsTab({ member, memberKey }) {
             const [period, setPeriod] = useState('hoy');
             const [reading, setReading] = useState(() => {
-                // Load all cached readings from localStorage on mount
                 const cached = {};
                 const allPeriods = ['hoy','semana','mes','ano','3anos','5anos','decada'];
                 allPeriods.forEach(p => {
@@ -883,7 +1075,7 @@ Usa un tono místico pero claro. Máximo 800 palabras.`}
                     }
                     return hours;
                 } else if (p === 'semana') {
-                    const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+                    const days = ['Lun', 'Mar', 'MiÃ©', 'Jue', 'Vie', 'SÃ¡b', 'Dom'];
                     return days.map((day, i) => ({
                         day,
                         energy: Math.max(2, Math.min(10, 5 + seededRandom(baseSeed + i) * 4))
@@ -920,37 +1112,37 @@ Usa un tono místico pero claro. Máximo 800 palabras.`}
             const chartData = getChartDataForPeriod(period);
 
             const periods = [
-                { id: 'hoy', label: 'Hoy', icon: '☀️' },
-                { id: 'semana', label: 'Semana', icon: '📅' },
-                { id: 'mes', label: 'Mes', icon: '🌙' },
-                { id: 'ano', label: '2026', icon: '⭐' },
-                { id: '3anos', label: '3 Años', icon: '🔮' },
-                { id: '5anos', label: '5 Años', icon: '🌌' },
-                { id: 'decada', label: 'Década', icon: '♾️' }
+                { id: 'hoy', label: 'Hoy', icon: 'âï¸' },
+                { id: 'semana', label: 'Semana', icon: 'ð' },
+                { id: 'mes', label: 'Mes', icon: 'ð' },
+                { id: 'ano', label: '2026', icon: 'â­' },
+                { id: '3anos', label: '3 AÃ±os', icon: 'ð®' },
+                { id: '5anos', label: '5 AÃ±os', icon: 'ð' },
+                { id: 'decada', label: 'DÃ©cada', icon: 'â¾ï¸' }
             ];
 
             const periodDescriptions = {
-                hoy: `Hoy es ${new Date().toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}. Dame la lectura astrológica de HOY para ${member.name}. Incluye: energía del día, qué hacer y qué evitar, consejo cósmico. Sé específico con las posiciones planetarias actuales.`,
-                semana: `Dame la lectura astrológica de ESTA SEMANA (${new Date().toLocaleDateString('es-MX')}) para ${member.name}. Incluye: tema semanal, mejores días, desafíos, oportunidades, consejo.`,
-                mes: `Dame la lectura astrológica de ESTE MES (${new Date().toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}) para ${member.name}. Incluye: tema mensual, fases lunares relevantes, áreas de vida destacadas, consejo.`,
-                ano: `Dame la lectura astrológica ANUAL 2026 para ${member.name}. Año personal numerológico: ${member.numerology.personalYear2026}. Incluye: tema del año, trimestres, momentos clave, áreas de crecimiento, advertencias, oportunidades.`,
-                '3anos': `Dame la lectura astrológica de los PRÓXIMOS 3 AÑOS (2026-2028) para ${member.name}. Incluye: ciclos planetarios mayores, evolución personal, hitos probables, temas por año.`,
-                '5anos': `Dame la lectura astrológica de los PRÓXIMOS 5 AÑOS (2026-2030) para ${member.name}. Incluye: tránsitos de Saturno, Júpiter y planetas exteriores, transformaciones profundas, ciclos de vida.`,
-                decada: `Dame la lectura astrológica de la PRÓXIMA DÉCADA (2026-2036) para ${member.name}. Incluye: grandes ciclos planetarios (retorno de Saturno si aplica, tránsitos de Plutón/Neptuno/Urano), evolución del alma, destino cósmico.`
+                hoy: `Hoy es ${new Date().toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}. Dame la lectura astrolÃ³gica de HOY para ${member.name}. Incluye: energÃ­a del dÃ­a, quÃ© hacer y quÃ© evitar, consejo cÃ³smico. SÃ© especÃ­fico con las posiciones planetarias actuales.`,
+                semana: `Dame la lectura astrolÃ³gica de ESTA SEMANA (${new Date().toLocaleDateString('es-MX')}) para ${member.name}. Incluye: tema semanal, mejores dÃ­as, desafÃ­os, oportunidades, consejo.`,
+                mes: `Dame la lectura astrolÃ³gica de ESTE MES (${new Date().toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}) para ${member.name}. Incluye: tema mensual, fases lunares relevantes, Ã¡reas de vida destacadas, consejo.`,
+                ano: `Dame la lectura astrolÃ³gica ANUAL 2026 para ${member.name}. AÃ±o personal numerolÃ³gico: ${member.numerology.personalYear2026}. Incluye: tema del aÃ±o, trimestres, momentos clave, Ã¡reas de crecimiento, advertencias, oportunidades.`,
+                '3anos': `Dame la lectura astrolÃ³gica de los PRÃXIMOS 3 AÃOS (2026-2028) para ${member.name}. Incluye: ciclos planetarios mayores, evoluciÃ³n personal, hitos probables, temas por aÃ±o.`,
+                '5anos': `Dame la lectura astrolÃ³gica de los PRÃXIMOS 5 AÃOS (2026-2030) para ${member.name}. Incluye: trÃ¡nsitos de Saturno, JÃºpiter y planetas exteriores, transformaciones profundas, ciclos de vida.`,
+                decada: `Dame la lectura astrolÃ³gica de la PRÃXIMA DÃCADA (2026-2036) para ${member.name}. Incluye: grandes ciclos planetarios (retorno de Saturno si aplica, trÃ¡nsitos de PlutÃ³n/Neptuno/Urano), evoluciÃ³n del alma, destino cÃ³smico.`
             };
 
             async function getReading(p) {
                 setLoadingPeriod(p);
                 try {
                     const planets = Object.entries(member.western).map(([pl, pos]) => `${pl}: ${pos.sign} ${pos.degree}`).join(', ');
-                    const transitPrompt = `Eres un astrólogo místico experto. ${periodDescriptions[p]}
+                    const transitPrompt = `Eres un astrÃ³logo mÃ­stico experto. ${periodDescriptions[p]}
 
 Datos natales: ${member.name}, nacido ${member.born} en ${member.birthPlace}
 Posiciones: ${planets}
 Signo chino: ${member.chinese.fullSign}, Enneagram: ${member.enneagram}, Life Path: ${member.numerology.lifePath}
 Tarot: ${member.tarot}, I Ching: Hex ${member.iChing.hex} ${member.iChing.name}
 
-Escribe en español, con lenguaje poético pero accesible. Usa secciones con títulos claros. Máximo 1000 palabras.`;
+Escribe en espaÃ±ol, con lenguaje poÃ©tico pero accesible. Usa secciones con tÃ­tulos claros. MÃ¡ximo 1000 palabras.`;
                     const resp = await fetch('/api/interpret', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -975,21 +1167,21 @@ Escribe en español, con lenguaje poético pero accesible. Usa secciones con tí
                                 <defs>
                                     <linearGradient id="tGrad" x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="5%" stopColor="#f0d78c" stopOpacity={1}/>
-                                        <stop offset="30%" stopColor="#d4a574" stopOpacity={0.6}/>
-                                        <stop offset="95%" stopColor="#c084fc" stopOpacity={0.05}/>
+                                        <stop offset="30%" stopColor="#d4af37" stopOpacity={0.6}/>
+                                        <stop offset="95%" stopColor="#d4af37" stopOpacity={0.05}/>
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,165,116,0.2)" />
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,175,55,0.2)" />
                                 <XAxis dataKey={period === 'hoy' ? 'hour' : period === 'semana' ? 'day' : period === 'mes' ? 'week' : (period === 'ano' ? 'month' : 'year')} stroke="#808080" style={{ fontSize: '11px' }} />
                                 <YAxis stroke="#808080" domain={[0,10]} width={35} />
-                                <Tooltip contentStyle={{ background: '#1a0a2e', border: '2px solid #d4a574', borderRadius: '8px' }} cursor={{ fill: 'rgba(212,165,116,0.1)' }} />
+                                <Tooltip contentStyle={{ background: '#111111', border: '2px solid #d4af37', borderRadius: '8px' }} cursor={{ fill: 'rgba(212,175,55,0.1)' }} />
                                 <Area type="monotone" dataKey="energy" stroke="#f0d78c" strokeWidth={2} fillOpacity={1} fill="url(#tGrad)" dot={{ fill: '#f0d78c', r: 3 }} activeDot={{ r: 5 }} isAnimationActive={true} />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
 
                     <div className="cosmic-card p-4">
-                        <h4 className="text-lg font-bold gradient-text mb-3">🔮 Transits</h4>
+                        <h4 className="text-lg font-bold gradient-text mb-3">ð® Transits</h4>
                         <div className="flex flex-wrap gap-1 mb-4">
                             {periods.map(p => (
                                 <button key={p.id} onClick={() => { setPeriod(p.id); if (!reading[p.id]) getReading(p.id); }}
@@ -1001,8 +1193,8 @@ Escribe en español, con lenguaje poético pero accesible. Usa secciones con tí
 
                         {loadingPeriod === period && (
                             <div className="flex flex-col items-center gap-2 py-4">
-                                <div className="w-8 h-8 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
-                                <p className="text-yellow-400 italic text-xs">Consultando...</p>
+                                <div className="w-8 h-8 border-4 border-yellow-300 border-t-transparent rounded-full animate-spin"></div>
+                                <p className="text-yellow-300 italic text-xs">Consultando...</p>
                             </div>
                         )}
 
@@ -1010,7 +1202,7 @@ Escribe en español, con lenguaje poético pero accesible. Usa secciones con tí
                             <div>
                                 <button onClick={() => { clearReading(memberKey, 'transits', period); setReading(prev => { const next = {...prev}; delete next[period]; return next; }); getReading(period); }}
                                     className="mb-3 px-3 py-1.5 text-xs rounded-lg bg-yellow-600/20 text-yellow-300 border border-yellow-400/50 hover:bg-yellow-600/40 transition-all">
-                                    🔄 Actualizar
+                                    ð Actualizar
                                 </button>
                                 <div className="prose prose-invert max-w-none bg-black/20 rounded-lg p-4 border border-yellow-600/20 text-sm max-h-96 overflow-y-auto" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
                                     <p className="text-gray-300 text-xs">{reading[period]}</p>
@@ -1019,8 +1211,8 @@ Escribe en español, con lenguaje poético pero accesible. Usa secciones con tí
                         )}
 
                         {!reading[period] && loadingPeriod !== period && (
-                            <button onClick={() => getReading(period)} className="w-full px-4 py-2 text-xs rounded-lg font-bold transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #d4a574, #f0d78c)', color: '#1a0a2e' }}>
-                                ✨ Consultar ✨
+                            <button onClick={() => getReading(period)} className="w-full px-4 py-2 text-xs rounded-lg font-bold transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #d4af37, #f0d78c)', color: '#000000' }}>
+                                â¨ Consultar â¨
                             </button>
                         )}
                     </div>
@@ -1028,47 +1220,46 @@ Escribe en español, con lenguaje poético pero accesible. Usa secciones con tí
             );
         }
 
-        // ==================== VEDIC ASTROLOGY TAB ====================
+        // ==================== VEDIC, NUMEROLOGY, CHINESE, ESOTERIC, ORACLE TABS ====================
         function VedicAstrology({ member, memberKey }) {
             return (
                 <div className="space-y-6">
                     <div className="cosmic-card p-6">
-                        <h4 className="text-xl font-bold gradient-text mb-6">Perfil Védico / Jyotish</h4>
+                        <h4 className="text-xl font-bold gradient-text mb-6">Perfil VÃ©dico / Jyotish</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="p-4 bg-black/30 rounded-lg border border-yellow-600/20">
                                 <p className="text-gray-400 mb-2">Lagna (Ascendente)</p>
-                                <p className="text-2xl font-bold text-yellow-400 mb-2">{member.vedic.lagna}</p>
+                                <p className="text-2xl font-bold text-yellow-300 mb-2">{member.vedic.lagna}</p>
                             </div>
                             <div className="p-4 bg-black/30 rounded-lg border border-yellow-600/20">
                                 <p className="text-gray-400 mb-2">Signo Lunar (Rasi)</p>
-                                <p className="text-2xl font-bold text-yellow-400 mb-2">{member.vedic.moonSign}</p>
+                                <p className="text-2xl font-bold text-yellow-300 mb-2">{member.vedic.moonSign}</p>
                             </div>
                             <div className="p-4 bg-black/30 rounded-lg border border-yellow-600/20">
-                                <p className="text-gray-400 mb-2">Nakshatra (Mansión Lunar)</p>
-                                <p className="text-2xl font-bold text-yellow-400 mb-2">{member.vedic.nakshatra}</p>
+                                <p className="text-gray-400 mb-2">Nakshatra (MansiÃ³n Lunar)</p>
+                                <p className="text-2xl font-bold text-yellow-300 mb-2">{member.vedic.nakshatra}</p>
                             </div>
                             <div className="p-4 bg-black/30 rounded-lg border border-yellow-600/20">
                                 <p className="text-gray-400 mb-2">Atmakaraka (Significador del Alma)</p>
-                                <p className="text-2xl font-bold text-yellow-400 mb-2">{member.vedic.atmakaraka}</p>
+                                <p className="text-2xl font-bold text-yellow-300 mb-2">{member.vedic.atmakaraka}</p>
                             </div>
                         </div>
                     </div>
 
-                    <InterpretButton member={member} memberKey={memberKey} section="vedic" period="general" title="Interpretación Védica" prompt={`Eres un experto en astrología Védica/Jyotish. Interpreta el perfil védico de ${member.name} (nacido ${member.born}):
+                    <InterpretButton member={member} memberKey={memberKey} section="vedic" period="general" title="InterpretaciÃ³n VÃ©dica" prompt={`Eres un experto en astrologÃ­a VÃ©dica/Jyotish. Interpreta el perfil vÃ©dico de ${member.name} (nacido ${member.born}):
 Lagna: ${member.vedic.lagna}, Signo Lunar: ${member.vedic.moonSign}, Nakshatra: ${member.vedic.nakshatra}, Atmakaraka: ${member.vedic.atmakaraka}
 Sol occidental: ${member.western.sun.sign}
 
-Escribe en español. Explica qué significa cada elemento para su vida, personalidad y destino. Usa lenguaje místico pero claro. Máximo 600 palabras.`} />
+Escribe en espaÃ±ol. Explica quÃ© significa cada elemento para su vida, personalidad y destino. Usa lenguaje mÃ­stico pero claro. MÃ¡ximo 600 palabras.`} />
 
                     <div className="cosmic-card p-6 border-t border-yellow-600/30 pt-6 mt-6">
-                        <h4 className="text-xl font-bold gradient-text mb-6">Tránsitos Védicos</h4>
+                        <h4 className="text-xl font-bold gradient-text mb-6">TrÃ¡nsitos VÃ©dicos</h4>
                         <TransitsTab member={member} memberKey={memberKey} />
                     </div>
                 </div>
             );
         }
 
-        // ==================== NUMEROLOGY TAB ====================
         function NumerologyTab({ member, memberKey }) {
             const chartData = member.monthlyEnergy2026.map((val, i) => ({
                 month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],
@@ -1082,23 +1273,23 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                             <div className="text-center p-4 bg-black/30 rounded border border-yellow-600/20">
                                 <p className="text-xs text-gray-400 mb-2">Life Path</p>
-                                <p className="text-3xl font-bold text-yellow-400">{member.numerology.lifePath}</p>
+                                <p className="text-3xl font-bold text-yellow-300">{member.numerology.lifePath}</p>
                             </div>
                             <div className="text-center p-4 bg-black/30 rounded border border-yellow-600/20">
                                 <p className="text-xs text-gray-400 mb-2">Expression</p>
-                                <p className="text-3xl font-bold text-yellow-400">{member.numerology.expression}</p>
+                                <p className="text-3xl font-bold text-yellow-300">{member.numerology.expression}</p>
                             </div>
                             <div className="text-center p-4 bg-black/30 rounded border border-yellow-600/20">
                                 <p className="text-xs text-gray-400 mb-2">Soul Urge</p>
-                                <p className="text-3xl font-bold text-yellow-400">{member.numerology.soulUrge}</p>
+                                <p className="text-3xl font-bold text-yellow-300">{member.numerology.soulUrge}</p>
                             </div>
                             <div className="text-center p-4 bg-black/30 rounded border border-yellow-600/20">
                                 <p className="text-xs text-gray-400 mb-2">Personality</p>
-                                <p className="text-3xl font-bold text-yellow-400">{member.numerology.personality}</p>
+                                <p className="text-3xl font-bold text-yellow-300">{member.numerology.personality}</p>
                             </div>
                             <div className="text-center p-4 bg-black/30 rounded border border-yellow-600/20">
                                 <p className="text-xs text-gray-400 mb-2">Maturity</p>
-                                <p className="text-3xl font-bold text-yellow-400">{member.numerology.maturity}</p>
+                                <p className="text-3xl font-bold text-yellow-300">{member.numerology.maturity}</p>
                             </div>
                         </div>
                     </div>
@@ -1109,15 +1300,15 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
                             <AreaChart data={chartData}>
                                 <defs>
                                     <linearGradient id="colorEnergy" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#d4a574" stopOpacity={0.8}/>
-                                        <stop offset="95%" stopColor="#d4a574" stopOpacity={0.1}/>
+                                        <stop offset="5%" stopColor="#d4af37" stopOpacity={0.8}/>
+                                        <stop offset="95%" stopColor="#d4af37" stopOpacity={0.1}/>
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(212, 165, 116, 0.2)" />
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(212, 175, 55, 0.2)" />
                                 <XAxis dataKey="month" stroke="#808080" />
                                 <YAxis stroke="#808080" />
                                 <Tooltip />
-                                <Area type="monotone" dataKey="energy" stroke="#d4a574" fillOpacity={1} fill="url(#colorEnergy)" />
+                                <Area type="monotone" dataKey="energy" stroke="#d4af37" fillOpacity={1} fill="url(#colorEnergy)" />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
@@ -1128,19 +1319,18 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
                         section="numerology"
                         period="general"
                         system="Numerology"
-                        title="Interpretación Numerológica"
-                        prompt={`Eres un numerólogo experto. Interpreta en profundidad el perfil numerológico de ${member.name}. Sus números son: Life Path ${member.numerology.lifePath}, Expression ${member.numerology.expression}, Soul Urge ${member.numerology.soulUrge}, Personality ${member.numerology.personality}, Maturity ${member.numerology.maturity}, Personal Year 2026: ${member.numerology.personalYear2026}. Explica qué significa cada número para su vida, personalidad, misión de alma, y qué energías dominan su 2026. Responde en español, con profundidad espiritual y práctica.`}
+                        title="InterpretaciÃ³n NumerolÃ³gica"
+                        prompt={`Eres un numerÃ³logo experto. Interpreta en profundidad el perfil numerolÃ³gico de ${member.name}. Sus nÃºmeros son: Life Path ${member.numerology.lifePath}, Expression ${member.numerology.expression}, Soul Urge ${member.numerology.soulUrge}, Personality ${member.numerology.personality}, Maturity ${member.numerology.maturity}, Personal Year 2026: ${member.numerology.personalYear2026}. Explica quÃ© significa cada nÃºmero para su vida, personalidad, misiÃ³n de alma, y quÃ© energÃ­as dominan su 2026. Responde en espaÃ±ol, con profundidad espiritual y prÃ¡ctica.`}
                     />
 
                     <div className="cosmic-card p-6 border-t border-yellow-600/30 pt-6 mt-6">
-                        <h4 className="text-xl font-bold gradient-text mb-6">Tránsitos Numerológicos</h4>
+                        <h4 className="text-xl font-bold gradient-text mb-6">TrÃ¡nsitos NumerolÃ³gicos</h4>
                         <TransitsTab member={member} memberKey={memberKey} />
                     </div>
                 </div>
             );
         }
 
-        // ==================== CHINESE ASTROLOGY TAB ====================
         function ChineseAstrology({ member, memberKey }) {
             return (
                 <div className="space-y-6">
@@ -1149,15 +1339,15 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="text-center p-4">
                                 <p className="text-gray-400 mb-2">Animal</p>
-                                <p className="text-4xl font-bold text-yellow-400 mb-2">{member.chinese.animal}</p>
+                                <p className="text-4xl font-bold text-yellow-300 mb-2">{member.chinese.animal}</p>
                             </div>
                             <div className="text-center p-4">
                                 <p className="text-gray-400 mb-2">Element</p>
-                                <p className="text-4xl font-bold text-yellow-400 mb-2">{member.chinese.element}</p>
+                                <p className="text-4xl font-bold text-yellow-300 mb-2">{member.chinese.element}</p>
                             </div>
                             <div className="text-center p-4">
                                 <p className="text-gray-400 mb-2">Full Sign</p>
-                                <p className="text-xl font-bold text-yellow-400">{member.chinese.fullSign}</p>
+                                <p className="text-xl font-bold text-yellow-300">{member.chinese.fullSign}</p>
                             </div>
                         </div>
                     </div>
@@ -1168,19 +1358,18 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
                         section="chinese"
                         period="general"
                         system="Chinese Astrology"
-                        title="Interpretación Astrología China"
-                        prompt={`Eres un maestro de astrología china. Interpreta en profundidad el perfil de ${member.name}: Animal: ${member.chinese.animal}, Elemento: ${member.chinese.element}, Signo completo: ${member.chinese.fullSign}. Explica qué significa su animal y elemento para su personalidad, compatibilidades, fortalezas y desafíos. Analiza cómo le afecta el 2026 (Año del Caballo de Fuego) según su signo. Responde en español con profundidad.`}
+                        title="InterpretaciÃ³n AstrologÃ­a China"
+                        prompt={`Eres un maestro de astrologÃ­a china. Interpreta en profundidad el perfil de ${member.name}: Animal: ${member.chinese.animal}, Elemento: ${member.chinese.element}, Signo completo: ${member.chinese.fullSign}. Explica quÃ© significa su animal y elemento para su personalidad, compatibilidades, fortalezas y desafÃ­os. Analiza cÃ³mo le afecta el 2026 (AÃ±o del Caballo de Fuego) segÃºn su signo. Responde en espaÃ±ol con profundidad.`}
                     />
 
                     <div className="cosmic-card p-6 border-t border-yellow-600/30 pt-6 mt-6">
-                        <h4 className="text-xl font-bold gradient-text mb-6">Tránsitos Chinos</h4>
+                        <h4 className="text-xl font-bold gradient-text mb-6">TrÃ¡nsitos Chinos</h4>
                         <TransitsTab member={member} memberKey={memberKey} />
                     </div>
                 </div>
             );
         }
 
-        // ==================== ESOTERIC TAB ====================
         function EsotericSystems({ member, memberKey }) {
             return (
                 <div className="space-y-6">
@@ -1193,10 +1382,10 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
                         <div className="cosmic-card p-6">
                             <h4 className="text-lg font-bold gradient-text mb-2">I Ching</h4>
                             <p className="text-white font-semibold">Hexagram {member.iChing.hex}: {member.iChing.name}</p>
-                            <p className="text-yellow-400 text-sm">{member.iChing.meaning}</p>
+                            <p className="text-yellow-300 text-sm">{member.iChing.meaning}</p>
                         </div>
 
-                        {member.humanDesign !== '—' && (
+                        {member.humanDesign !== 'â' && (
                             <div className="cosmic-card p-6">
                                 <h4 className="text-lg font-bold gradient-text mb-2">Human Design</h4>
                                 <p className="text-white font-semibold">{member.humanDesign}</p>
@@ -1215,19 +1404,18 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
                         section="esoteric"
                         period="general"
                         system="Esoteric Systems"
-                        title="Interpretación Esotérica Integral"
-                        prompt={`Eres un experto en sistemas esotéricos. Interpreta el perfil esotérico completo de ${member.name}: Tarot: ${member.tarot}, I Ching: Hexagrama ${member.iChing.hex} - ${member.iChing.name} (${member.iChing.meaning}), Human Design: ${member.humanDesign}, Enneagram: ${member.enneagram}. Explica cómo estos sistemas se interconectan para revelar el propósito de vida, desafíos kármicos y potencial espiritual de esta persona. Responde en español con profundidad mística.`}
+                        title="InterpretaciÃ³n EsotÃ©rica Integral"
+                        prompt={`Eres un experto en sistemas esotÃ©ricos. Interpreta el perfil esotÃ©rico completo de ${member.name}: Tarot: ${member.tarot}, I Ching: Hexagrama ${member.iChing.hex} - ${member.iChing.name} (${member.iChing.meaning}), Human Design: ${member.humanDesign}, Enneagram: ${member.enneagram}. Explica cÃ³mo estos sistemas se interconectan para revelar el propÃ³sito de vida, desafÃ­os kÃ¡rmicos y potencial espiritual de esta persona. Responde en espaÃ±ol con profundidad mÃ­stica.`}
                     />
 
                     <div className="cosmic-card p-6 border-t border-yellow-600/30 pt-6 mt-6">
-                        <h4 className="text-xl font-bold gradient-text mb-6">Tránsitos Esotéricos</h4>
+                        <h4 className="text-xl font-bold gradient-text mb-6">TrÃ¡nsitos EsotÃ©ricos</h4>
                         <TransitsTab member={member} memberKey={memberKey} />
                     </div>
                 </div>
             );
         }
 
-        // ==================== AI ORACLE TAB ====================
         function AIOracle({ member }) {
             const [question, setQuestion] = useState('');
             const [response, setResponse] = useState('');
@@ -1238,9 +1426,9 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
                 setResponse('');
 
                 try {
-                    const oraclePrompt = `Eres El Oráculo, un astrólogo místico que proporciona interpretaciones profundas y perspicaces. Hablas con sabiduría y autoridad mística. Siempre responde en el idioma en que el usuario escribe. Proporciona interpretaciones astrológicas ricas basadas en los datos proporcionados.
+                    const oraclePrompt = `Eres El OrÃ¡culo, un astrÃ³logo mÃ­stico que proporciona interpretaciones profundas y perspicaces. Hablas con sabidurÃ­a y autoridad mÃ­stica. Siempre responde en el idioma en que el usuario escribe. Proporciona interpretaciones astrolÃ³gicas ricas basadas en los datos proporcionados.
 
-Información del consultante:
+InformaciÃ³n del consultante:
 Nombre: ${member.name}
 Nacido: ${member.born} en ${member.birthPlace}
 Sol: ${member.western.sun.sign} ${member.western.sun.degree}
@@ -1261,10 +1449,10 @@ Pregunta del consultante: ${question}`;
                     if (data.error) {
                         setResponse('Error: ' + data.error);
                     } else {
-                        setResponse(data.content?.[0]?.text || 'El Oráculo no pudo responder.');
+                        setResponse(data.content?.[0]?.text || 'El OrÃ¡culo no pudo responder.');
                     }
                 } catch (error) {
-                    setResponse(`Error de conexión: ${error.message}`);
+                    setResponse(`Error de conexiÃ³n: ${error.message}`);
                 }
 
                 setLoading(false);
@@ -1276,7 +1464,7 @@ Pregunta del consultante: ${question}`;
                         <h4 className="text-xl font-bold gradient-text mb-4">Consult the Oracle</h4>
 
                         <div className="mb-4">
-                            <label className="block text-sm text-gray-400 mb-2">Tu Pregunta al Oráculo</label>
+                            <label className="block text-sm text-gray-400 mb-2">Tu Pregunta al OrÃ¡culo</label>
                             <textarea
                                 value={question}
                                 onChange={(e) => setQuestion(e.target.value)}
@@ -1343,386 +1531,58 @@ Pregunta del consultante: ${question}`;
             );
         }
 
-        // ==================== FAMILY VIEW ====================
-        function FamilyView() {
-            const members = Object.values(familyMembers);
-            const activeMembers = members.filter(m => !m.isPending);
-            const [familyReading, setFamilyReading] = useState('');
-            const [isLoadingReading, setIsLoadingReading] = useState(false);
-            const [activeSection, setActiveSection] = useState('overview');
-
-            const MEMBER_COLORS = ['#d4a574', '#74c0fc', '#ff6b6b', '#51cf66', '#c084fc', '#06b6d4', '#f59e0b'];
-
-            const elements = { Fire: 0, Earth: 0, Air: 0, Water: 0, Wood: 0 };
-            members.forEach(m => { if (m.chinese.element && elements[m.chinese.element] !== undefined) elements[m.chinese.element]++; });
-            const elementData = Object.entries(elements).filter(([,v]) => v > 0).map(([name, value]) => ({ name, value }));
-            const ELEM_COLORS = { Fire: '#ff6b6b', Earth: '#51cf66', Air: '#74c0fc', Water: '#06b6d4', Wood: '#22c55e' };
-
-            const numCompareData = ['lifePath', 'expression', 'soulUrge', 'personality', 'maturity'].map(key => {
-                const row = { name: key === 'lifePath' ? 'Life Path' : key === 'soulUrge' ? 'Soul Urge' : key.charAt(0).toUpperCase() + key.slice(1) };
-                members.forEach(m => { row[m.name.split(' ')[0]] = typeof m.numerology[key] === 'number' ? m.numerology[key] : 0; });
-                return row;
-            });
-
-            const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-            const energyData = months.map((m, i) => {
-                const row = { name: m };
-                activeMembers.forEach(member => { row[member.name.split(' ')[0]] = member.monthlyEnergy2026[i]; });
-                return row;
-            });
-
-            const sunSigns = {};
-            members.forEach(m => { const s = m.western.sun.sign; if (s && s !== '—') sunSigns[s] = (sunSigns[s] || 0) + 1; });
-            const sunSignData = Object.entries(sunSigns).map(([name, value]) => ({ name, value }));
-
-            async function getFamilyReading() {
-                setIsLoadingReading(true);
-                try {
-                    const familySummary = members.map(m =>
-                        `${m.name}: Sol ${m.western.sun.sign}, Life Path ${m.numerology.lifePath}, ${m.chinese.fullSign}, Enneagram ${m.enneagram}, Tarot ${m.tarot}, ${m.title}`
-                    ).join('\n');
-
-                    const familyPrompt = `Eres un astrólogo místico experto. Analiza la dinámica cósmica de la familia Boone. Escribe en español, con lenguaje poético pero accesible. Incluye:
-
-1. **Sinergias Familiares**: ¿Cómo se complementan energéticamente?
-2. **Dinámica Padres-Hijos**: La relación cósmica entre Edgar y Vanessa como pareja, y con cada hijo.
-3. **Los Trillizos**: Qué los une y qué los diferencia cósmicamente.
-4. **Gabriel**: Su rol especial en la familia.
-5. **Mikel (por nacer Sept 2026)**: Qué energía trae a la familia.
-6. **Consejo Cósmico 2026**: Un mensaje para toda la familia.
-
-Datos de la familia:
-${familySummary}
-
-Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras.`;
-                    const resp = await fetch('/api/interpret', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ prompt: familyPrompt, max_tokens: 2000 })
-                    });
-                    const data = await resp.json();
-                    setFamilyReading(data.error ? ('Error: ' + data.error) : (data.content?.[0]?.text || 'No se pudo obtener la lectura.'));
-                } catch (e) {
-                    setFamilyReading('Error al conectar con el Oráculo: ' + e.message);
-                }
-                setIsLoadingReading(false);
-            }
-
-            const sections = [
-                { id: 'overview', label: 'Vista General' },
-                { id: 'numerology', label: 'Numerología' },
-                { id: 'energy', label: 'Energía 2026' },
-                { id: 'zodiac', label: 'Zodiaco' },
-                { id: 'oracle', label: 'Oráculo Familiar' }
-            ];
+        // ==================== FAMILY SELECTOR ====================
+        function FamilySelector({ selected, onSelect }) {
+            const members = Object.keys(familyMembers);
 
             return (
-                <div>
-                    <div className="flex flex-wrap gap-2 mb-6 border-b border-yellow-600/30 pb-4">
-                        {sections.map(s => (
-                            <button key={s.id} onClick={() => setActiveSection(s.id)}
-                                className={`tab-button ${activeSection === s.id ? 'active' : ''}`}>
-                                {s.label}
+                <div className="flex flex-wrap gap-4 justify-center mb-8">
+                    {members.map(key => {
+                        const member = familyMembers[key];
+                        const sunSign = member.western.sun.sign;
+                        const isActive = selected === key;
+
+                        return (
+                            <button
+                                key={key}
+                                onClick={() => onSelect(key)}
+                                className={`relative w-20 h-20 rounded-full transition-all ${isActive ? 'glow-gold scale-110' : 'hover:scale-105'}`}
+                                style={{
+                                    background: isActive ? 'linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(240, 215, 140, 0.1))' : 'linear-gradient(135deg, rgba(17, 17, 17, 0.8), rgba(25, 25, 25, 0.8))',
+                                    border: isActive ? '2px solid #d4af37' : '1px solid rgba(212, 175, 55, 0.3)',
+                                    opacity: member.isPending ? 0.7 : 1
+                                }}
+                            >
+                                <div className="w-full h-full flex flex-col items-center justify-center">
+                                    <div className="text-2xl">{member.isPending ? 'â¨' : ZODIAC_SYMBOLS[ZODIAC_SIGNS.indexOf(sunSign)]}</div>
+                                    <div className="text-xs text-yellow-300 font-semibold mt-1">{member.name.split(' ')[0]}</div>
+                                </div>
                             </button>
-                        ))}
-                    </div>
-
-                    {activeSection === 'overview' && (
-                        <div className="space-y-6">
-                            <div className="cosmic-card p-8">
-                                <h3 className="text-3xl font-bold gradient-text mb-2">Familia Boone</h3>
-                                <p className="text-yellow-400 text-lg mb-6">Constelación Cósmica — {members.length} Almas</p>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {members.map((m, i) => (
-                                        <div key={i} className="p-4 bg-black/30 rounded-lg border border-yellow-600/20 hover:border-yellow-400/50 transition-all">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <span className="text-2xl">{m.isPending ? '✨' : ZODIAC_SYMBOLS[ZODIAC_SIGNS.indexOf(m.western.sun.sign)]}</span>
-                                                <div>
-                                                    <p className="font-bold text-white">{m.name.split(' ')[0]}</p>
-                                                    <p className="text-xs text-gray-400">{m.western.sun.sign} • LP {m.numerology.lifePath}</p>
-                                                </div>
-                                            </div>
-                                            <p className="text-yellow-400 text-xs italic">{m.title}</p>
-                                            <p className="text-gray-400 text-xs mt-1">{m.born}</p>
-                                            {m.isPending && <p className="text-purple-400 text-xs mt-1">⏳ Aún por nacer</p>}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="cosmic-card p-6">
-                                <h4 className="text-xl font-bold gradient-text mb-4">Balance Elemental de la Familia</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <ResponsiveContainer width="100%" height={280}>
-                                        <PieChart>
-                                            <Pie data={elementData} cx="50%" cy="50%" innerRadius={60} outerRadius={100}
-                                                label={({ name, value }) => `${name}: ${value}`} dataKey="value" isAnimationActive={true}>
-                                                {elementData.map((entry, index) => (
-                                                    <Cell key={index} fill={ELEM_COLORS[entry.name] || '#888'} />
-                                                ))}
-                                            </Pie>
-                                            <Tooltip contentStyle={{ background: '#1a0a2e', border: '2px solid #d4a574', borderRadius: '8px', boxShadow: '0 0 15px rgba(212,165,116,0.3)' }} />
-                                        </PieChart>
-                                    </ResponsiveContainer>
-                                    <div className="flex flex-col justify-center space-y-3">
-                                        {elementData.map((e, i) => (
-                                            <div key={i} className="flex items-center gap-3">
-                                                <div className="w-4 h-4 rounded-full" style={{ background: ELEM_COLORS[e.name] }}></div>
-                                                <span className="text-white font-semibold">{e.name}</span>
-                                                <div className="flex-1 h-2 bg-black/30 rounded-full overflow-hidden">
-                                                    <div className="h-full rounded-full" style={{ width: `${(e.value/members.length)*100}%`, background: ELEM_COLORS[e.name] }}></div>
-                                                </div>
-                                                <span className="text-yellow-400 font-bold">{e.value}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="cosmic-card p-6">
-                                <h4 className="text-xl font-bold gradient-text mb-4">Constelación Familiar — Compatibilidad Cósmica</h4>
-                                <ResponsiveContainer width="100%" height={400}>
-                                    <RadarChart data={[
-                                        { dimension: 'Intelecto', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.numerology.expression || 5) * 1.2)), 0) / members.length },
-                                        { dimension: 'Emoción', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.western.moon.sign === 'Cancer' ? 8 : m.western.moon.sign === 'Pisces' ? 8 : m.western.moon.sign === 'Scorpio' ? 7 : 5))), 0) / members.length },
-                                        { dimension: 'Acción', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.western.mars?.sign === 'Aries' ? 9 : m.western.mars?.sign === 'Cancer' ? 5 : m.western.mars?.sign === 'Leo' ? 8 : 6))), 0) / members.length },
-                                        { dimension: 'Espiritualidad', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.chinese.element === 'Water' ? 8 : m.chinese.element === 'Fire' ? 6 : m.chinese.element === 'Wood' ? 7 : 5))), 0) / members.length },
-                                        { dimension: 'Creatividad', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.tarot.includes('Empress') ? 9 : m.tarot.includes('Magician') ? 8 : 6))), 0) / members.length },
-                                        { dimension: 'Liderazgo', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.numerology.lifePath <= 3 ? 8 : m.numerology.lifePath <= 6 ? 6 : 5))), 0) / members.length }
-                                    ]}>
-                                        <PolarGrid stroke="rgba(212,165,116,0.3)" />
-                                        <PolarAngleAxis dataKey="dimension" stroke="#a0a0a0" tick={{ fontSize: 11 }} />
-                                        <PolarRadiusAxis stroke="#606060" domain={[0, 10]} />
-                                        <Tooltip contentStyle={{ background: '#1a0a2e', border: '2px solid #d4a574', borderRadius: '8px', boxShadow: '0 0 15px rgba(212,165,116,0.3)' }} />
-                                        <Radar name="Familia Boone" dataKey="value" stroke="#f0d78c" fill="#d4a574" fillOpacity={0.35} isAnimationActive={true} dot={{ fill: '#f0d78c', r: 5 }} />
-                                    </RadarChart>
-                                </ResponsiveContainer>
-                                <p className="text-center text-gray-400 text-sm mt-4 italic">Promedio de fortalezas cósmicas de la constelación familiar</p>
-                            </div>
-
-                            <div className="cosmic-card p-6">
-                                <h4 className="text-xl font-bold gradient-text mb-4">Roles & Arquetipos Familiares</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {members.map((m, i) => (
-                                        <div key={i} className="p-4 bg-black/30 rounded-lg border-l-4 transition-all hover:bg-black/50"
-                                            style={{ borderLeftColor: MEMBER_COLORS[i] }}>
-                                            <div className="flex justify-between items-start">
-                                                <div>
-                                                    <p className="font-bold text-white text-lg">{m.name}</p>
-                                                    <p className="text-yellow-400 text-sm mt-1">{m.title}</p>
-                                                </div>
-                                                <span className="text-2xl">{m.isPending ? '✨' : ZODIAC_SYMBOLS[ZODIAC_SIGNS.indexOf(m.western.sun.sign)]}</span>
-                                            </div>
-                                            <div className="flex gap-3 mt-3 flex-wrap">
-                                                <span className="text-xs px-2 py-1 bg-yellow-600/20 rounded text-yellow-300">{m.chinese.fullSign}</span>
-                                                <span className="text-xs px-2 py-1 bg-purple-600/20 rounded text-purple-300">Enneagram {m.enneagram}</span>
-                                                <span className="text-xs px-2 py-1 bg-blue-600/20 rounded text-blue-300">Tarot: {m.tarot}</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
+                        );
+                    })}
+                    <button
+                        onClick={() => onSelect('family')}
+                        className={`relative w-20 h-20 rounded-full transition-all ${selected === 'family' ? 'glow-gold scale-110' : 'hover:scale-105'}`}
+                        style={{
+                            background: selected === 'family' ? 'linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(240, 215, 140, 0.1))' : 'linear-gradient(135deg, rgba(17, 17, 17, 0.8), rgba(25, 25, 25, 0.8))',
+                            border: selected === 'family' ? '2px solid #d4af37' : '1px solid rgba(212, 175, 55, 0.3)'
+                        }}
+                    >
+                        <div className="w-full h-full flex flex-col items-center justify-center">
+                            <div className="text-2xl">ð¨âð©âð§âð¦</div>
+                            <div className="text-xs text-yellow-300 font-semibold mt-1">Familia</div>
                         </div>
-                    )}
+                    </button>
+                </div>
+            );
+        }
 
-                    {activeSection === 'numerology' && (
-                        <div className="space-y-6">
-                            <div className="cosmic-card p-6">
-                                <h4 className="text-xl font-bold gradient-text mb-4">Comparativa Numerológica</h4>
-                                <ResponsiveContainer width="100%" height={400}>
-                                    <BarChart data={numCompareData} barGap={2}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,165,116,0.2)" />
-                                        <XAxis dataKey="name" stroke="#a0a0a0" style={{ fontSize: '12px' }} />
-                                        <YAxis stroke="#a0a0a0" />
-                                        <Tooltip contentStyle={{ background: '#1a0a2e', border: '2px solid #d4a574', borderRadius: '8px', boxShadow: '0 0 15px rgba(212,165,116,0.3)' }} cursor={{ fill: 'rgba(212,165,116,0.1)' }} />
-                                        <Legend />
-                                        {members.map((m, i) => (
-                                            <Bar key={i} dataKey={m.name.split(' ')[0]} fill={MEMBER_COLORS[i]} radius={[6,6,0,0]} isAnimationActive={true} />
-                                        ))}
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </div>
-
-                            <div className="cosmic-card p-6">
-                                <h4 className="text-xl font-bold gradient-text mb-4">Perfil Numerológico por Miembro</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {members.map((m, i) => {
-                                        const rd = [
-                                            { name: 'LP', value: m.numerology.lifePath || 0 },
-                                            { name: 'Exp', value: typeof m.numerology.expression === 'number' ? m.numerology.expression : 0 },
-                                            { name: 'Alma', value: m.numerology.soulUrge || 0 },
-                                            { name: 'Pers', value: m.numerology.personality || 0 },
-                                            { name: 'Mad', value: m.numerology.maturity || 0 }
-                                        ];
-                                        return (
-                                            <div key={i} className="p-4 bg-black/30 rounded-lg border border-yellow-600/20">
-                                                <p className="text-center font-bold text-white mb-2">{m.name.split(' ')[0]}</p>
-                                                <ResponsiveContainer width="100%" height={180}>
-                                                    <RadarChart data={rd}>
-                                                        <PolarGrid stroke="rgba(212,165,116,0.3)" />
-                                                        <PolarAngleAxis dataKey="name" stroke="#a0a0a0" tick={{ fontSize: 10 }} />
-                                                        <PolarRadiusAxis stroke="#606060" domain={[0, 10]} tick={{ fontSize: 8 }} />
-                                                        <Tooltip contentStyle={{ background: '#1a0a2e', border: '1px solid #d4a574', borderRadius: '6px' }} />
-                                                        <Radar dataKey="value" stroke={MEMBER_COLORS[i]} fill={MEMBER_COLORS[i]} fillOpacity={0.35} isAnimationActive={true} dot={{ fill: MEMBER_COLORS[i], r: 3 }} />
-                                                    </RadarChart>
-                                                </ResponsiveContainer>
-                                                <p className="text-center text-yellow-400 text-sm">Año Personal 2026: <strong>{m.numerology.personalYear2026}</strong></p>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {activeSection === 'energy' && (
-                        <div className="space-y-6">
-                            <div className="cosmic-card p-6">
-                                <h4 className="text-xl font-bold gradient-text mb-4">Pronóstico Energético 2026 — Comparativa Familiar</h4>
-                                <ResponsiveContainer width="100%" height={400}>
-                                    <AreaChart data={energyData}>
-                                        <defs>
-                                            {activeMembers.map((m, i) => (
-                                                <linearGradient key={i} id={`areaGrad${i}`} x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor={MEMBER_COLORS[i]} stopOpacity={0.8}/>
-                                                    <stop offset="95%" stopColor={MEMBER_COLORS[i]} stopOpacity={0.05}/>
-                                                </linearGradient>
-                                            ))}
-                                        </defs>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,165,116,0.2)" />
-                                        <XAxis dataKey="name" stroke="#a0a0a0" style={{ fontSize: '12px' }} />
-                                        <YAxis stroke="#a0a0a0" domain={[0, 10]} />
-                                        <Tooltip contentStyle={{ background: '#1a0a2e', border: '2px solid #d4a574', borderRadius: '8px', boxShadow: '0 0 15px rgba(212,165,116,0.3)' }} cursor={{ fill: 'rgba(212,165,116,0.1)' }} />
-                                        <Legend />
-                                        {activeMembers.map((m, i) => (
-                                            <Area key={i} type="monotone" dataKey={m.name.split(' ')[0]} stroke={MEMBER_COLORS[i]}
-                                                fill={`url(#areaGrad${i})`} fillOpacity={1} strokeWidth={3} dot={{ fill: MEMBER_COLORS[i], r: 3 }} activeDot={{ r: 5 }} isAnimationActive={true} />
-                                        ))}
-                                    </AreaChart>
-                                </ResponsiveContainer>
-                            </div>
-
-                            <div className="cosmic-card p-6">
-                                <h4 className="text-xl font-bold gradient-text mb-4">Picos Energéticos por Miembro</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    {activeMembers.map((m, i) => {
-                                        const maxE = Math.max(...m.monthlyEnergy2026);
-                                        const maxMonth = months[m.monthlyEnergy2026.indexOf(maxE)];
-                                        const minE = Math.min(...m.monthlyEnergy2026.filter(e => e > 0));
-                                        const minMonth = months[m.monthlyEnergy2026.indexOf(minE)];
-                                        return (
-                                            <div key={i} className="p-4 bg-black/30 rounded-lg border-l-4" style={{ borderLeftColor: MEMBER_COLORS[i] }}>
-                                                <p className="font-bold text-white">{m.name.split(' ')[0]}</p>
-                                                <div className="mt-2 space-y-1">
-                                                    <p className="text-green-400 text-sm">⬆ Mejor mes: <strong>{maxMonth}</strong> (energía {maxE})</p>
-                                                    <p className="text-red-400 text-sm">⬇ Mes bajo: <strong>{minMonth}</strong> (energía {minE})</p>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {activeSection === 'zodiac' && (
-                        <div className="space-y-6">
-                            <div className="cosmic-card p-6">
-                                <h4 className="text-xl font-bold gradient-text mb-4">Distribución Solar de la Familia</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <ResponsiveContainer width="100%" height={280}>
-                                        <PieChart>
-                                            <Pie data={sunSignData} cx="50%" cy="50%" outerRadius={100} innerRadius={40}
-                                                label={({ name, value }) => `${name}: ${value}`} dataKey="value" isAnimationActive={true}>
-                                                {sunSignData.map((_, i) => <Cell key={i} fill={MEMBER_COLORS[i % MEMBER_COLORS.length]} />)}
-                                            </Pie>
-                                            <Tooltip contentStyle={{ background: '#1a0a2e', border: '1px solid #d4a574', borderRadius: '6px' }} />
-                                        </PieChart>
-                                    </ResponsiveContainer>
-                                    <div className="flex flex-col justify-center space-y-4">
-                                        {members.map((m, i) => (
-                                            <div key={i} className="flex items-center gap-3">
-                                                <span className="text-xl">{m.isPending ? '✨' : ZODIAC_SYMBOLS[ZODIAC_SIGNS.indexOf(m.western.sun.sign)]}</span>
-                                                <span className="text-white font-semibold w-24">{m.name.split(' ')[0]}</span>
-                                                <span className="text-yellow-400">{m.western.sun.sign} {m.western.sun.degree}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="cosmic-card p-6">
-                                <h4 className="text-xl font-bold gradient-text mb-4">Zodíaco Chino — Animales de la Familia</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {members.map((m, i) => {
-                                        const animalEmojis = { Rat: '🐀', Pig: '🐷', Horse: '🐴', Monkey: '🐵' };
-                                        return (
-                                            <div key={i} className="p-4 bg-black/30 rounded-lg border border-yellow-600/20 text-center">
-                                                <div className="text-4xl mb-2">{animalEmojis[m.chinese.animal] || '🌟'}</div>
-                                                <p className="font-bold text-white">{m.name.split(' ')[0]}</p>
-                                                <p className="text-yellow-400 text-sm">{m.chinese.fullSign}</p>
-                                                <p className="text-gray-400 text-xs mt-1">Elemento: {m.chinese.element}</p>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-
-                            <div className="cosmic-card p-6">
-                                <h4 className="text-xl font-bold gradient-text mb-4">I Ching Familiar</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {members.map((m, i) => (
-                                        <div key={i} className="p-4 bg-black/30 rounded-lg border border-yellow-600/20 text-center">
-                                            <p className="text-3xl font-bold text-yellow-400 mb-1">☰ {m.iChing.hex}</p>
-                                            <p className="font-bold text-white">{m.name.split(' ')[0]}</p>
-                                            <p className="text-yellow-400 text-sm">{m.iChing.name}</p>
-                                            <p className="text-gray-400 text-xs mt-1">{m.iChing.meaning}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {activeSection === 'oracle' && (
-                        <div className="space-y-6">
-                            <div className="cosmic-card p-8 text-center">
-                                <h3 className="text-3xl font-bold gradient-text mb-4">🔮 Oráculo de la Familia Boone</h3>
-                                <p className="text-gray-400 mb-6">Consulta al Oráculo cósmico para un análisis profundo de las sinergias, dinámicas y destino colectivo de la familia.</p>
-                                {!familyReading && !isLoadingReading && (
-                                    <button onClick={getFamilyReading}
-                                        className="px-8 py-4 rounded-lg text-lg font-bold transition-all hover:scale-105"
-                                        style={{ background: 'linear-gradient(135deg, #d4a574, #f0d78c)', color: '#1a0a2e' }}>
-                                        ✨ Consultar Oráculo Familiar ✨
-                                    </button>
-                                )}
-                                {isLoadingReading && (
-                                    <div className="flex flex-col items-center gap-4">
-                                        <div className="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
-                                        <p className="text-yellow-400 italic">El Oráculo analiza la constelación familiar...</p>
-                                    </div>
-                                )}
-                            </div>
-                            {familyReading && (
-                                <div className="cosmic-card p-8">
-                                    <div className="prose prose-invert max-w-none" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}>
-                                        {familyReading.split('\n').map((line, i) => {
-                                            if (line.startsWith('##')) return <h3 key={i} className="text-xl font-bold gradient-text mt-6 mb-3">{line.replace(/##\s*/, '')}</h3>;
-                                            if (line.startsWith('**') && line.endsWith('**')) return <h4 key={i} className="text-lg font-bold text-yellow-400 mt-4 mb-2">{line.replace(/\*\*/g, '')}</h4>;
-                                            if (line.trim() === '') return <br key={i} />;
-                                            return <p key={i} className="text-gray-300 mb-2">{line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').split('<strong>').map((part, j) => {
-                                                if (part.includes('</strong>')) {
-                                                    const [bold, rest] = part.split('</strong>');
-                                                    return <React.Fragment key={j}><strong className="text-yellow-400">{bold}</strong>{rest}</React.Fragment>;
-                                                }
-                                                return part;
-                                            })}</p>;
-                                        })}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
+        // ==================== FAMILY VIEW (PLACEHOLDER) ====================
+        function FamilyView() {
+            return (
+                <div className="cosmic-card p-8">
+                    <h3 className="text-3xl font-bold gradient-text mb-4">Familia Boone</h3>
+                    <p className="text-gray-300">Family visualization features coming soon...</p>
                 </div>
             );
         }
@@ -1748,28 +1608,29 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                     if (resp.ok && data.success) {
                         sessionStorage.setItem('oracle_token', data.token);
                         sessionStorage.setItem('oracle_user', data.user);
+                        await syncReadingsFromServer(data.token);
                         onLogin(data.user, data.displayName);
                     } else {
-                        setError(data.error || 'Credenciales inválidas');
+                        setError(data.error || 'Credenciales invÃ¡lidas');
                     }
                 } catch (err) {
-                    setError('Error de conexión. Intenta de nuevo.');
+                    setError('Error de conexiÃ³n. Intenta de nuevo.');
                 }
                 setLoading(false);
             }
 
             return (
-                <div className="min-h-screen flex items-center justify-center relative" style={{ background: 'linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #16213e 100%)' }}>
+                <div className="min-h-screen flex items-center justify-center relative" style={{ background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #111111 100%)' }}>
                     <StarfieldBackground />
                     <div className="relative z-10 w-full max-w-md mx-4">
                         <div className="text-center mb-8">
                             <h1 className="text-5xl md:text-6xl font-bold gradient-text gold-shimmer mb-3" style={{ fontFamily: 'Cinzel, serif' }}>
                                 The Oracle's Mirror
                             </h1>
-                            <p className="text-yellow-400 text-lg" style={{ fontFamily: 'Playfair Display, serif' }}>
+                            <p className="text-yellow-300 text-lg" style={{ fontFamily: 'Playfair Display, serif' }}>
                                 Boone Family Cosmic Portal
                             </p>
-                            <div className="mt-4 text-6xl">🔮</div>
+                            <div className="mt-4 text-6xl">ð®</div>
                         </div>
 
                         <form onSubmit={handleLogin} className="cosmic-card p-8 space-y-6">
@@ -1779,13 +1640,13 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
 
                             {error && (
                                 <div className="bg-red-900/30 border border-red-500/50 rounded-lg p-3 text-center">
-                                    <p className="text-red-300 text-sm">⚠️ {error}</p>
+                                    <p className="text-red-300 text-sm">â ï¸ {error}</p>
                                 </div>
                             )}
 
                             <div>
-                                <label className="block text-yellow-400 text-sm font-semibold mb-2" style={{ fontFamily: 'Cinzel, serif' }}>
-                                    ✦ Usuario
+                                <label className="block text-yellow-300 text-sm font-semibold mb-2" style={{ fontFamily: 'Cinzel, serif' }}>
+                                    â¦ Usuario
                                 </label>
                                 <input
                                     type="text"
@@ -1799,15 +1660,15 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                             </div>
 
                             <div>
-                                <label className="block text-yellow-400 text-sm font-semibold mb-2" style={{ fontFamily: 'Cinzel, serif' }}>
-                                    ✦ Contraseña
+                                <label className="block text-yellow-300 text-sm font-semibold mb-2" style={{ fontFamily: 'Cinzel, serif' }}>
+                                    â¦ ContraseÃ±a
                                 </label>
                                 <input
                                     type="password"
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
                                     className="w-full px-4 py-3 rounded-lg bg-black/50 border border-yellow-600/30 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400/50 transition-all"
-                                    placeholder="Tu contraseña"
+                                    placeholder="Tu contraseÃ±a"
                                     autoComplete="current-password"
                                     required
                                 />
@@ -1817,7 +1678,7 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                                 type="submit"
                                 disabled={loading}
                                 className="w-full py-3 rounded-lg font-bold text-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-                                style={{ background: 'linear-gradient(135deg, #d4a574, #f0d78c)', color: '#1a0a2e', fontFamily: 'Cinzel, serif' }}
+                                style={{ background: 'linear-gradient(135deg, #d4af37, #f0d78c)', color: '#000000', fontFamily: 'Cinzel, serif' }}
                             >
                                 {loading ? (
                                     <span className="flex items-center justify-center gap-2">
@@ -1825,7 +1686,7 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                                         Consultando los astros...
                                     </span>
                                 ) : (
-                                    '✨ Entrar al Portal ✨'
+                                    'â¨ Entrar al Portal â¨'
                                 )}
                             </button>
                         </form>
@@ -1861,6 +1722,7 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                         });
                         const data = await resp.json();
                         if (data.valid) {
+                            await syncReadingsFromServer(token);
                             setIsAuthenticated(true);
                             setCurrentUser(data.user);
                             setDisplayName(data.displayName);
@@ -1893,11 +1755,11 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
 
             if (authChecking) {
                 return (
-                    <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #16213e 100%)' }}>
+                    <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #111111 100%)' }}>
                         <div className="text-center">
-                            <div className="text-6xl mb-4">🔮</div>
-                            <div className="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                            <p className="text-yellow-400" style={{ fontFamily: 'Cinzel, serif' }}>Alineando los astros...</p>
+                            <div className="text-6xl mb-4">ð®</div>
+                            <div className="w-10 h-10 border-4 border-yellow-300 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                            <p className="text-yellow-300" style={{ fontFamily: 'Cinzel, serif' }}>Alineando los astros...</p>
                         </div>
                     </div>
                 );
@@ -1916,16 +1778,16 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                             <div className="flex justify-between items-center">
                                 <div className="flex-1"></div>
                                 <div className="text-center flex-shrink-0">
-                                    <h1 className="text-5xl md:text-6xl font-bold gradient-text gold-shimmer mb-2" style={{ fontFamily: 'Cinzel, serif' }}>
+                                    <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold gradient-text gold-shimmer mb-2" style={{ fontFamily: 'Cinzel, serif' }}>
                                         The Oracle's Mirror
                                     </h1>
-                                    <p className="text-yellow-400 text-lg" style={{ fontFamily: 'Playfair Display, serif' }}>
+                                    <p className="text-yellow-300 text-lg" style={{ fontFamily: 'Playfair Display, serif' }}>
                                         Boone Family Cosmic Portal
                                     </p>
                                 </div>
                                 <div className="flex-1 flex justify-end items-center gap-3">
-                                    <span className="text-yellow-400 text-sm hidden md:inline" style={{ fontFamily: 'Cinzel, serif' }}>
-                                        ✦ {displayName}
+                                    <span className="text-yellow-300 text-sm hidden md:inline" style={{ fontFamily: 'Cinzel, serif' }}>
+                                        â¦ {displayName}
                                     </span>
                                     <button
                                         onClick={handleLogout}
@@ -1957,3 +1819,5 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
     </script>
 </body>
 </html>
+
+V®uè¬iËb½è§¶¬µ¦à®©:§r­+&Ë
