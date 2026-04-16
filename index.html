@@ -849,7 +849,16 @@ Usa un tono místico pero claro. Máximo 800 palabras.`}
         // ==================== TRANSITS TAB (MULTI-TIMEFRAME) ====================
         function TransitsTab({ member, memberKey }) {
             const [period, setPeriod] = useState('hoy');
-            const [reading, setReading] = useState({});
+            const [reading, setReading] = useState(() => {
+                // Load all cached readings from localStorage on mount
+                const cached = {};
+                const allPeriods = ['hoy','semana','mes','ano','3anos','5anos','decada'];
+                allPeriods.forEach(p => {
+                    const stored = loadReading(memberKey, 'transits', p);
+                    if (stored) cached[p] = stored.text;
+                });
+                return cached;
+            });
             const [loadingPeriod, setLoadingPeriod] = useState('');
 
             function seededRandom(seed) {
@@ -998,8 +1007,14 @@ Escribe en español, con lenguaje poético pero accesible. Usa secciones con tí
                         )}
 
                         {reading[period] && loadingPeriod !== period && (
-                            <div className="prose prose-invert max-w-none bg-black/20 rounded-lg p-4 border border-yellow-600/20 text-sm max-h-96 overflow-y-auto" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
-                                <p className="text-gray-300 text-xs">{reading[period]}</p>
+                            <div>
+                                <button onClick={() => { clearReading(memberKey, 'transits', period); setReading(prev => { const next = {...prev}; delete next[period]; return next; }); getReading(period); }}
+                                    className="mb-3 px-3 py-1.5 text-xs rounded-lg bg-yellow-600/20 text-yellow-300 border border-yellow-400/50 hover:bg-yellow-600/40 transition-all">
+                                    🔄 Actualizar
+                                </button>
+                                <div className="prose prose-invert max-w-none bg-black/20 rounded-lg p-4 border border-yellow-600/20 text-sm max-h-96 overflow-y-auto" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
+                                    <p className="text-gray-300 text-xs">{reading[period]}</p>
+                                </div>
                             </div>
                         )}
 
