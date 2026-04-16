@@ -211,6 +211,20 @@
         const { useState, useEffect, useCallback, useMemo } = React;
         const { LineChart, Line, AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart } = window.Recharts;
 
+        // ==================== STORAGE HELPERS ====================
+        function saveReading(memberKey, section, period, text) {
+            const key = `oracle_${memberKey}_${section}_${period}`;
+            localStorage.setItem(key, JSON.stringify({ text, timestamp: Date.now() }));
+        }
+        function loadReading(memberKey, section, period) {
+            const key = `oracle_${memberKey}_${section}_${period}`;
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : null;
+        }
+        function clearReading(memberKey, section, period) {
+            localStorage.removeItem(`oracle_${memberKey}_${section}_${period}`);
+        }
+
         // ==================== DATA ====================
         const familyMembers = {
             edgar: {
@@ -578,96 +592,6 @@
             );
         }
 
-        // ==================== PERSON OVERVIEW TAB ====================
-        function PersonOverview({ member, key: memberKey }) {
-            const radarData = [
-                { name: 'Life Path', value: typeof member.numerology.lifePath === 'number' ? member.numerology.lifePath : 5 },
-                { name: 'Expression', value: typeof member.numerology.expression === 'number' ? member.numerology.expression : 5 },
-                { name: 'Soul Urge', value: typeof member.numerology.soulUrge === 'number' ? member.numerology.soulUrge : 5 },
-                { name: 'Personality', value: typeof member.numerology.personality === 'number' ? member.numerology.personality : 5 },
-                { name: 'Maturity', value: typeof member.numerology.maturity === 'number' ? member.numerology.maturity : 5 }
-            ];
-
-            return (
-                <div>
-                    <div className="cosmic-card p-8 mb-6">
-                        <h3 className="text-3xl font-bold gradient-text mb-2">{member.name}</h3>
-                        <p className="text-yellow-400 text-lg mb-4">{member.title}</p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <p className="text-gray-400">Born:</p>
-                                <p className="text-white font-semibold">{member.born}</p>
-                            </div>
-                            <div>
-                                <p className="text-gray-400">Place:</p>
-                                <p className="text-white font-semibold">{member.birthPlace}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {typeof member.numerology.lifePath === 'number' && (
-                        <div className="cosmic-card p-6 mb-6">
-                            <h4 className="text-xl font-bold gradient-text mb-4">Numerology Profile</h4>
-                            <div className="mb-6 flex justify-center">
-                                <ResponsiveContainer width="100%" height={300}>
-                                    <RadarChart data={radarData}>
-                                        <PolarGrid stroke="rgba(212, 165, 116, 0.3)" />
-                                        <PolarAngleAxis dataKey="name" stroke="#a0a0a0" />
-                                        <PolarRadiusAxis stroke="rgba(212, 165, 116, 0.3)" />
-                                        <Radar name="Numbers" dataKey="value" stroke="#d4a574" fill="#d4a574" fillOpacity={0.5} />
-                                    </RadarChart>
-                                </ResponsiveContainer>
-                            </div>
-                            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                                <div className="text-center">
-                                    <p className="text-xs text-gray-400 mb-1">Life Path</p>
-                                    <p className="text-2xl font-bold text-yellow-400">{member.numerology.lifePath}</p>
-                                </div>
-                                <div className="text-center">
-                                    <p className="text-xs text-gray-400 mb-1">Expression</p>
-                                    <p className="text-2xl font-bold text-yellow-400">{member.numerology.expression}</p>
-                                </div>
-                                <div className="text-center">
-                                    <p className="text-xs text-gray-400 mb-1">Soul Urge</p>
-                                    <p className="text-2xl font-bold text-yellow-400">{member.numerology.soulUrge}</p>
-                                </div>
-                                <div className="text-center">
-                                    <p className="text-xs text-gray-400 mb-1">Personality</p>
-                                    <p className="text-2xl font-bold text-yellow-400">{member.numerology.personality}</p>
-                                </div>
-                                <div className="text-center">
-                                    <p className="text-xs text-gray-400 mb-1">Maturity</p>
-                                    <p className="text-2xl font-bold text-yellow-400">{member.numerology.maturity}</p>
-                                </div>
-                            </div>
-                            <div className="mt-6 pt-4 border-t border-yellow-600/30">
-                                <p className="text-sm text-gray-400 mb-2">2026 Personal Year:</p>
-                                <p className="text-3xl font-bold text-yellow-400">{member.numerology.personalYear2026}</p>
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="cosmic-card p-6 mb-6">
-                        <h4 className="text-xl font-bold gradient-text mb-4">Key Signatures</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                            <div>
-                                <p className="text-gray-400 mb-1">Chinese Sign</p>
-                                <p className="text-white font-semibold">{member.chinese.fullSign}</p>
-                            </div>
-                            <div>
-                                <p className="text-gray-400 mb-1">Enneagram</p>
-                                <p className="text-white font-semibold">{member.enneagram}</p>
-                            </div>
-                            <div>
-                                <p className="text-gray-400 mb-1">Tarot</p>
-                                <p className="text-white font-semibold text-xs">{member.tarot}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
         // ==================== NATAL CHART WHEEL ====================
         function NatalChartWheel({ member }) {
             const cx = 200, cy = 200, outerR = 180, innerR = 130, planetR = 155;
@@ -714,86 +638,17 @@
             );
         }
 
-        // ==================== WESTERN ASTROLOGY TAB ====================
-        function WesternAstrology({ member }) {
-            const [interpretation, setInterpretation] = useState('');
+        // ==================== ENHANCED INTERPRET BUTTON WITH STORAGE ====================
+        function InterpretButton({ member, memberKey, section, period, system, prompt, title }) {
+            const [text, setText] = useState(() => {
+                const stored = loadReading(memberKey, section, period);
+                return stored ? stored.text : '';
+            });
             const [loading, setLoading] = useState(false);
-
-            async function getInterpretation() {
-                setLoading(true);
-                try {
-                    const planets = Object.entries(member.western).map(([p, pos]) => `${p}: ${pos.sign} ${pos.degree}`).join(', ');
-                    const userPrompt = `Eres un astrólogo experto. Interpreta la carta natal de ${member.name} (nacido ${member.born} en ${member.birthPlace}).
-
-Posiciones: ${planets}
-
-Escribe en español. Da una interpretación profunda pero accesible:
-1. **Esencia Solar**: Qué significa su sol en ${member.western.sun.sign}
-2. **Mundo Emocional**: Su luna en ${member.western.moon?.sign || 'desconocida'}
-3. **Aspectos Destacados**: Patrones notables entre sus planetas
-4. **Dones y Desafíos**: Lo que la carta revela
-5. **Mensaje del Cosmos**: Un consejo basado en su carta
-
-Usa un tono místico pero claro. Máximo 800 palabras.`;
-                    const resp = await fetch('/api/interpret', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ prompt: userPrompt, max_tokens: 1500 })
-                    });
-                    const data = await resp.json();
-                    setInterpretation(data.error ? ('Error: ' + data.error) : (data.content?.[0]?.text || 'Error en la interpretación.'));
-                } catch(e) { setInterpretation('Error: ' + e.message); }
-                setLoading(false);
-            }
-
-            return (
-                <div className="space-y-6">
-                    <div className="cosmic-card p-6">
-                        <h4 className="text-xl font-bold gradient-text mb-4">Carta Natal — {member.name}</h4>
-                        <NatalChartWheel member={member} />
-                    </div>
-
-                    <div className="cosmic-card p-6">
-                        <h4 className="text-xl font-bold gradient-text mb-4">Posiciones Planetarias</h4>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            {Object.entries(member.western).map(([planet, pos]) => (
-                                <div key={planet} className="p-4 bg-black/30 rounded-lg border border-yellow-600/20 text-center hover:border-yellow-400/50 transition-all">
-                                    <div className="text-2xl mb-1">{PLANET_SYMBOLS[planet.charAt(0).toUpperCase() + planet.slice(1)] || '⊕'}</div>
-                                    <p className="text-xs text-gray-400 capitalize mb-1">{planet}</p>
-                                    <p className="font-bold text-white">{pos.sign}</p>
-                                    <p className="text-xs text-yellow-400">{pos.degree}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="cosmic-card p-6">
-                        <h4 className="text-xl font-bold gradient-text mb-4">🔮 Interpretación de tu Carta Natal</h4>
-                        {!interpretation && !loading && (
-                            <button onClick={getInterpretation} className="w-full px-6 py-3 rounded-lg font-bold transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #d4a574, #f0d78c)', color: '#1a0a2e' }}>
-                                ✨ Interpretar mi Carta Natal ✨
-                            </button>
-                        )}
-                        {loading && (
-                            <div className="flex flex-col items-center gap-3 py-6">
-                                <div className="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
-                                <p className="text-yellow-400 italic">El Oráculo lee las estrellas...</p>
-                            </div>
-                        )}
-                        {interpretation && (
-                            <div className="prose prose-invert max-w-none" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}>
-                                <p className="text-gray-300">{interpretation}</p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );
-        }
-
-        // ==================== INTERPRETATION HELPER ====================
-        function InterpretButton({ member, system, prompt, title }) {
-            const [text, setText] = useState('');
-            const [loading, setLoading] = useState(false);
+            const [isStoredReading, setIsStoredReading] = useState(() => {
+                const stored = loadReading(memberKey, section, period);
+                return !!stored;
+            });
 
             async function interpret() {
                 setLoading(true);
@@ -804,13 +659,22 @@ Usa un tono místico pero claro. Máximo 800 palabras.`;
                         body: JSON.stringify({ prompt, model: 'claude-sonnet-4-20250514', max_tokens: 1500 })
                     });
                     const data = await resp.json();
-                    if (data.error) {
-                        setText('Error: ' + data.error);
-                    } else {
-                        setText(data.content?.[0]?.text || 'No se pudo obtener la interpretación.');
-                    }
-                } catch(e) { setText('Error de conexión: ' + e.message); }
+                    const result = data.error ? ('Error: ' + data.error) : (data.content?.[0]?.text || 'No se pudo obtener la interpretación.');
+                    setText(result);
+                    saveReading(memberKey, section, period, result);
+                    setIsStoredReading(true);
+                } catch(e) {
+                    const msg = 'Error de conexión: ' + e.message;
+                    setText(msg);
+                }
                 setLoading(false);
+            }
+
+            function refreshReading() {
+                clearReading(memberKey, section, period);
+                setText('');
+                setIsStoredReading(false);
+                interpret();
             }
 
             return (
@@ -827,13 +691,330 @@ Usa un tono místico pero claro. Máximo 800 palabras.`;
                             <p className="text-yellow-400 italic">El Oráculo interpreta...</p>
                         </div>
                     )}
-                    {text && <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}><p className="text-gray-300">{text}</p></div>}
+                    {text && (
+                        <div>
+                            {isStoredReading && (
+                                <button onClick={refreshReading} className="mb-4 px-4 py-2 text-sm rounded-lg bg-yellow-600/20 text-yellow-300 border border-yellow-400/50 hover:bg-yellow-600/40 transition-all">
+                                    🔄 Actualizar
+                                </button>
+                            )}
+                            <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}><p className="text-gray-300">{text}</p></div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // ==================== NATAL CHART TAB ====================
+        function NatalChartTab({ member, memberKey }) {
+            return (
+                <div className="space-y-6">
+                    <div className="cosmic-card p-6">
+                        <h4 className="text-xl font-bold gradient-text mb-4">Planetary Positions</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                            {Object.entries(member.western).map(([planet, pos]) => (
+                                <div key={planet} className="p-4 bg-black/30 rounded-lg border border-yellow-600/20 text-center hover:border-yellow-400/50 transition-all">
+                                    <div className="text-2xl mb-1">{PLANET_SYMBOLS[planet.charAt(0).toUpperCase() + planet.slice(1)] || '⊕'}</div>
+                                    <p className="text-xs text-gray-400 capitalize mb-1">{planet}</p>
+                                    <p className="font-bold text-white">{pos.sign}</p>
+                                    <p className="text-xs text-yellow-400">{pos.degree}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="cosmic-card p-6">
+                        <h4 className="text-xl font-bold gradient-text mb-4">Birth Chart Wheel</h4>
+                        <NatalChartWheel member={member} />
+                    </div>
+
+                    <InterpretButton
+                        member={member}
+                        memberKey={memberKey}
+                        section="natal"
+                        period="general"
+                        system="Western Astrology"
+                        title="Natal Chart Interpretation"
+                        prompt={`Eres un astrólogo experto. Interpreta la carta natal de ${member.name} (nacido ${member.born} en ${member.birthPlace}).
+
+Posiciones: ${Object.entries(member.western).map(([p, pos]) => `${p}: ${pos.sign} ${pos.degree}`).join(', ')}
+
+Escribe en español. Da una interpretación profunda pero accesible:
+1. **Esencia Solar**: Qué significa su sol en ${member.western.sun.sign}
+2. **Mundo Emocional**: Su luna en ${member.western.moon?.sign || 'desconocida'}
+3. **Aspectos Destacados**: Patrones notables entre sus planetas
+4. **Dones y Desafíos**: Lo que la carta revela
+5. **Mensaje del Cosmos**: Un consejo basado en su carta
+
+Usa un tono místico pero claro. Máximo 800 palabras.`}
+                    />
+                </div>
+            );
+        }
+
+        // ==================== PERFIL TAB (TWO COLUMNS) ====================
+        function PerfilTab({ member, memberKey }) {
+            const [overview, setOverview] = useState(() => {
+                const stored = loadReading(memberKey, 'perfil', 'overview');
+                return stored ? stored.text : '';
+            });
+            const [overviewLoading, setOverviewLoading] = useState(false);
+            const [isStoredOverview, setIsStoredOverview] = useState(() => {
+                const stored = loadReading(memberKey, 'perfil', 'overview');
+                return !!stored;
+            });
+
+            async function generateOverview() {
+                setOverviewLoading(true);
+                try {
+                    const prompt = `Eres un astrólogo sabio. Haz una interpretación GENERAL y ACCESIBLE de ${member.name}, sin usar lenguaje técnico. Integra todos sus sistemas: Astrología occidental (Sol ${member.western.sun.sign}, Luna ${member.western.moon?.sign}, Ascendente ${member.western.rising?.sign}), Astrología china (${member.chinese.fullSign}), Numerología (camino de vida ${member.numerology.lifePath}), Tarot (${member.tarot}), I Ching (Hexagrama ${member.iChing.hex}), Enneagrama (${member.enneagram}). Escribe como si le explicaras a un amigo quién es esta persona en esencia, sus fortalezas, desafíos, y potencial. Máximo 800 palabras. En español.`;
+                    const resp = await fetch('/api/interpret', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt, max_tokens: 1500 })
+                    });
+                    const data = await resp.json();
+                    const result = data.error ? ('Error: ' + data.error) : (data.content?.[0]?.text || 'Error');
+                    setOverview(result);
+                    saveReading(memberKey, 'perfil', 'overview', result);
+                    setIsStoredOverview(true);
+                } catch(e) {
+                    setOverview('Error: ' + e.message);
+                }
+                setOverviewLoading(false);
+            }
+
+            function refreshOverview() {
+                clearReading(memberKey, 'perfil', 'overview');
+                setOverview('');
+                setIsStoredOverview(false);
+                generateOverview();
+            }
+
+            return (
+                <div className="space-y-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                        {/* Left column: 60% - Overview */}
+                        <div className="lg:col-span-3 space-y-6">
+                            <div className="cosmic-card p-8">
+                                <h3 className="text-3xl font-bold gradient-text mb-2">{member.name}</h3>
+                                <p className="text-yellow-400 text-lg mb-4">{member.title}</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p className="text-gray-400">Born:</p>
+                                        <p className="text-white font-semibold">{member.born}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-400">Place:</p>
+                                        <p className="text-white font-semibold">{member.birthPlace}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="cosmic-card p-6">
+                                <h4 className="text-xl font-bold gradient-text mb-4">🔮 General Interpretation</h4>
+                                {!overview && !overviewLoading && (
+                                    <button onClick={generateOverview} className="w-full px-6 py-3 rounded-lg font-bold transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #d4a574, #f0d78c)', color: '#1a0a2e' }}>
+                                        ✨ Generate Interpretation ✨
+                                    </button>
+                                )}
+                                {overviewLoading && (
+                                    <div className="flex flex-col items-center gap-3 py-6">
+                                        <div className="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+                                        <p className="text-yellow-400 italic">El Oráculo interpreta...</p>
+                                    </div>
+                                )}
+                                {overview && (
+                                    <div>
+                                        {isStoredOverview && (
+                                            <button onClick={refreshOverview} className="mb-4 px-4 py-2 text-sm rounded-lg bg-yellow-600/20 text-yellow-300 border border-yellow-400/50 hover:bg-yellow-600/40 transition-all">
+                                                🔄 Actualizar
+                                            </button>
+                                        )}
+                                        <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}><p className="text-gray-300">{overview}</p></div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Right column: 40% - Transits */}
+                        <div className="lg:col-span-2">
+                            <TransitsTab member={member} memberKey={memberKey} />
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // ==================== TRANSITS TAB (MULTI-TIMEFRAME) ====================
+        function TransitsTab({ member, memberKey }) {
+            const [period, setPeriod] = useState('hoy');
+            const [reading, setReading] = useState({});
+            const [loadingPeriod, setLoadingPeriod] = useState('');
+
+            function seededRandom(seed) {
+                const x = Math.sin(seed) * 10000;
+                return x - Math.floor(x);
+            }
+
+            function getChartDataForPeriod(p) {
+                const hash = (str) => {
+                    let h = 0;
+                    for (let i = 0; i < str.length; i++) h = ((h << 5) - h) + str.charCodeAt(i);
+                    return h;
+                };
+                const baseSeed = hash(member.name + p);
+
+                if (p === 'hoy') {
+                    const hours = [];
+                    for (let i = 0; i < 24; i++) {
+                        const baseEnergy = 5 + 2 * Math.sin((i - 6) * Math.PI / 12);
+                        const randomFactor = seededRandom(baseSeed + i) * 1.5;
+                        hours.push({ hour: `${i}:00`, energy: Math.max(1, Math.min(10, baseEnergy + randomFactor)) });
+                    }
+                    return hours;
+                } else if (p === 'semana') {
+                    const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+                    return days.map((day, i) => ({
+                        day,
+                        energy: Math.max(2, Math.min(10, 5 + seededRandom(baseSeed + i) * 4))
+                    }));
+                } else if (p === 'mes') {
+                    return ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'].map((week, i) => ({
+                        week,
+                        energy: Math.max(2, Math.min(10, 5 + seededRandom(baseSeed + i) * 4))
+                    }));
+                } else if (p === 'ano') {
+                    return member.monthlyEnergy2026.map((val, i) => ({
+                        month: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][i],
+                        energy: val
+                    }));
+                } else if (p === '3anos') {
+                    return [
+                        { year: '2026', energy: 6 + seededRandom(baseSeed) * 3 },
+                        { year: '2027', energy: 5 + seededRandom(baseSeed + 1) * 3 },
+                        { year: '2028', energy: 7 + seededRandom(baseSeed + 2) * 3 }
+                    ];
+                } else if (p === '5anos') {
+                    return Array.from({ length: 5 }, (_, i) => ({
+                        year: String(2026 + i),
+                        energy: 5 + seededRandom(baseSeed + i) * 4
+                    }));
+                } else if (p === 'decada') {
+                    return Array.from({ length: 11 }, (_, i) => ({
+                        year: String(2026 + i),
+                        energy: 5 + seededRandom(baseSeed + i) * 4
+                    }));
+                }
+            }
+
+            const chartData = getChartDataForPeriod(period);
+
+            const periods = [
+                { id: 'hoy', label: 'Hoy', icon: '☀️' },
+                { id: 'semana', label: 'Semana', icon: '📅' },
+                { id: 'mes', label: 'Mes', icon: '🌙' },
+                { id: 'ano', label: '2026', icon: '⭐' },
+                { id: '3anos', label: '3 Años', icon: '🔮' },
+                { id: '5anos', label: '5 Años', icon: '🌌' },
+                { id: 'decada', label: 'Década', icon: '♾️' }
+            ];
+
+            const periodDescriptions = {
+                hoy: `Hoy es ${new Date().toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}. Dame la lectura astrológica de HOY para ${member.name}. Incluye: energía del día, qué hacer y qué evitar, consejo cósmico. Sé específico con las posiciones planetarias actuales.`,
+                semana: `Dame la lectura astrológica de ESTA SEMANA (${new Date().toLocaleDateString('es-MX')}) para ${member.name}. Incluye: tema semanal, mejores días, desafíos, oportunidades, consejo.`,
+                mes: `Dame la lectura astrológica de ESTE MES (${new Date().toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}) para ${member.name}. Incluye: tema mensual, fases lunares relevantes, áreas de vida destacadas, consejo.`,
+                ano: `Dame la lectura astrológica ANUAL 2026 para ${member.name}. Año personal numerológico: ${member.numerology.personalYear2026}. Incluye: tema del año, trimestres, momentos clave, áreas de crecimiento, advertencias, oportunidades.`,
+                '3anos': `Dame la lectura astrológica de los PRÓXIMOS 3 AÑOS (2026-2028) para ${member.name}. Incluye: ciclos planetarios mayores, evolución personal, hitos probables, temas por año.`,
+                '5anos': `Dame la lectura astrológica de los PRÓXIMOS 5 AÑOS (2026-2030) para ${member.name}. Incluye: tránsitos de Saturno, Júpiter y planetas exteriores, transformaciones profundas, ciclos de vida.`,
+                decada: `Dame la lectura astrológica de la PRÓXIMA DÉCADA (2026-2036) para ${member.name}. Incluye: grandes ciclos planetarios (retorno de Saturno si aplica, tránsitos de Plutón/Neptuno/Urano), evolución del alma, destino cósmico.`
+            };
+
+            async function getReading(p) {
+                setLoadingPeriod(p);
+                try {
+                    const planets = Object.entries(member.western).map(([pl, pos]) => `${pl}: ${pos.sign} ${pos.degree}`).join(', ');
+                    const transitPrompt = `Eres un astrólogo místico experto. ${periodDescriptions[p]}
+
+Datos natales: ${member.name}, nacido ${member.born} en ${member.birthPlace}
+Posiciones: ${planets}
+Signo chino: ${member.chinese.fullSign}, Enneagram: ${member.enneagram}, Life Path: ${member.numerology.lifePath}
+Tarot: ${member.tarot}, I Ching: Hex ${member.iChing.hex} ${member.iChing.name}
+
+Escribe en español, con lenguaje poético pero accesible. Usa secciones con títulos claros. Máximo 1000 palabras.`;
+                    const resp = await fetch('/api/interpret', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt: transitPrompt, max_tokens: 2000 })
+                    });
+                    const data = await resp.json();
+                    const result = data.error ? ('Error: ' + data.error) : (data.content?.[0]?.text || 'Error');
+                    setReading(prev => ({ ...prev, [p]: result }));
+                    saveReading(memberKey, 'transits', p, result);
+                } catch(e) {
+                    setReading(prev => ({ ...prev, [p]: 'Error: ' + e.message }));
+                }
+                setLoadingPeriod('');
+            }
+
+            return (
+                <div className="space-y-6">
+                    <div className="cosmic-card p-6">
+                        <h4 className="text-lg font-bold gradient-text mb-4">Transits</h4>
+                        <ResponsiveContainer key={'transit-chart-' + period} width="100%" height={250}>
+                            <AreaChart data={chartData}>
+                                <defs>
+                                    <linearGradient id="tGrad" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#f0d78c" stopOpacity={1}/>
+                                        <stop offset="30%" stopColor="#d4a574" stopOpacity={0.6}/>
+                                        <stop offset="95%" stopColor="#c084fc" stopOpacity={0.05}/>
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,165,116,0.2)" />
+                                <XAxis dataKey={period === 'hoy' ? 'hour' : period === 'semana' ? 'day' : period === 'mes' ? 'week' : (period === 'ano' ? 'month' : 'year')} stroke="#808080" style={{ fontSize: '11px' }} />
+                                <YAxis stroke="#808080" domain={[0,10]} width={35} />
+                                <Tooltip contentStyle={{ background: '#1a0a2e', border: '2px solid #d4a574', borderRadius: '8px' }} cursor={{ fill: 'rgba(212,165,116,0.1)' }} />
+                                <Area type="monotone" dataKey="energy" stroke="#f0d78c" strokeWidth={2} fillOpacity={1} fill="url(#tGrad)" dot={{ fill: '#f0d78c', r: 3 }} activeDot={{ r: 5 }} isAnimationActive={true} />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    <div className="cosmic-card p-4">
+                        <h4 className="text-lg font-bold gradient-text mb-3">🔮 Transits</h4>
+                        <div className="flex flex-wrap gap-1 mb-4">
+                            {periods.map(p => (
+                                <button key={p.id} onClick={() => { setPeriod(p.id); if (!reading[p.id]) getReading(p.id); }}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${period === p.id ? 'bg-gradient-to-r from-yellow-600/50 to-yellow-500/30 text-yellow-300 border border-yellow-400/50' : 'bg-black/30 text-gray-400 border border-yellow-600/20 hover:text-yellow-300'}`}>
+                                    {p.icon} {p.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {loadingPeriod === period && (
+                            <div className="flex flex-col items-center gap-2 py-4">
+                                <div className="w-8 h-8 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+                                <p className="text-yellow-400 italic text-xs">Consultando...</p>
+                            </div>
+                        )}
+
+                        {reading[period] && loadingPeriod !== period && (
+                            <div className="prose prose-invert max-w-none bg-black/20 rounded-lg p-4 border border-yellow-600/20 text-sm max-h-96 overflow-y-auto" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
+                                <p className="text-gray-300 text-xs">{reading[period]}</p>
+                            </div>
+                        )}
+
+                        {!reading[period] && loadingPeriod !== period && (
+                            <button onClick={() => getReading(period)} className="w-full px-4 py-2 text-xs rounded-lg font-bold transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #d4a574, #f0d78c)', color: '#1a0a2e' }}>
+                                ✨ Consultar ✨
+                            </button>
+                        )}
+                    </div>
                 </div>
             );
         }
 
         // ==================== VEDIC ASTROLOGY TAB ====================
-        function VedicAstrology({ member }) {
+        function VedicAstrology({ member, memberKey }) {
             return (
                 <div className="space-y-6">
                     <div className="cosmic-card p-6">
@@ -857,17 +1038,23 @@ Usa un tono místico pero claro. Máximo 800 palabras.`;
                             </div>
                         </div>
                     </div>
-                    <InterpretButton member={member} title="Interpretación Védica" prompt={`Eres un experto en astrología Védica/Jyotish. Interpreta el perfil védico de ${member.name} (nacido ${member.born}):
+
+                    <InterpretButton member={member} memberKey={memberKey} section="vedic" period="general" title="Interpretación Védica" prompt={`Eres un experto en astrología Védica/Jyotish. Interpreta el perfil védico de ${member.name} (nacido ${member.born}):
 Lagna: ${member.vedic.lagna}, Signo Lunar: ${member.vedic.moonSign}, Nakshatra: ${member.vedic.nakshatra}, Atmakaraka: ${member.vedic.atmakaraka}
 Sol occidental: ${member.western.sun.sign}
 
 Escribe en español. Explica qué significa cada elemento para su vida, personalidad y destino. Usa lenguaje místico pero claro. Máximo 600 palabras.`} />
+
+                    <div className="cosmic-card p-6 border-t border-yellow-600/30 pt-6 mt-6">
+                        <h4 className="text-xl font-bold gradient-text mb-6">Tránsitos Védicos</h4>
+                        <TransitsTab member={member} memberKey={memberKey} />
+                    </div>
                 </div>
             );
         }
 
         // ==================== NUMEROLOGY TAB ====================
-        function NumerologyTab({ member }) {
+        function NumerologyTab({ member, memberKey }) {
             const chartData = member.monthlyEnergy2026.map((val, i) => ({
                 month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],
                 energy: val
@@ -920,26 +1107,26 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
                         </ResponsiveContainer>
                     </div>
 
-                    <div className="cosmic-card p-6">
-                        <h4 className="text-xl font-bold gradient-text mb-4">2026 Personal Year</h4>
-                        <p className="text-5xl font-bold text-yellow-400 text-center mb-4">{member.numerology.personalYear2026}</p>
-                        <p className="text-gray-300 text-sm">
-                            Year {member.numerology.personalYear2026} brings themes of stability, building foundations, and material manifestation.
-                        </p>
-                    </div>
-
                     <InterpretButton
                         member={member}
+                        memberKey={memberKey}
+                        section="numerology"
+                        period="general"
                         system="Numerology"
                         title="Interpretación Numerológica"
-                        prompt={`Eres un numerólogo experto. Interpreta en profundidad el perfil numerológico de ${member.name}. Sus números son: Life Path ${member.numerology.lifePath}, Expression ${member.numerology.expression}, Soul Urge ${member.numerology.soulUrge}, Personality ${member.numerology.personality}, Maturity ${member.numerology.maturity}, Personal Year 2026: ${member.numerology.personalYear2026}. Explica qué significa cada número para su vida, personalidad, misión de alma, y qué energías dominan su 2026. Responde en español, con profundidad espiritual y práctica. Usa emojis para hacer la lectura más visual.`}
+                        prompt={`Eres un numerólogo experto. Interpreta en profundidad el perfil numerológico de ${member.name}. Sus números son: Life Path ${member.numerology.lifePath}, Expression ${member.numerology.expression}, Soul Urge ${member.numerology.soulUrge}, Personality ${member.numerology.personality}, Maturity ${member.numerology.maturity}, Personal Year 2026: ${member.numerology.personalYear2026}. Explica qué significa cada número para su vida, personalidad, misión de alma, y qué energías dominan su 2026. Responde en español, con profundidad espiritual y práctica.`}
                     />
+
+                    <div className="cosmic-card p-6 border-t border-yellow-600/30 pt-6 mt-6">
+                        <h4 className="text-xl font-bold gradient-text mb-6">Tránsitos Numerológicos</h4>
+                        <TransitsTab member={member} memberKey={memberKey} />
+                    </div>
                 </div>
             );
         }
 
         // ==================== CHINESE ASTROLOGY TAB ====================
-        function ChineseAstrology({ member }) {
+        function ChineseAstrology({ member, memberKey }) {
             return (
                 <div className="space-y-6">
                     <div className="cosmic-card p-6">
@@ -960,239 +1147,66 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
                         </div>
                     </div>
 
-                    <div className="cosmic-card p-6">
-                        <h4 className="text-xl font-bold gradient-text mb-4">2026: Year of the Fire Horse</h4>
-                        <p className="text-gray-300 mb-4">
-                            2026 is the Year of the Fire Horse, a time of passion, movement, and transformation.
-                            {member.chinese.animal === 'Horse' && (
-                                <span className="text-yellow-400 font-semibold"> Your sign is amplified this year!</span>
-                            )}
-                        </p>
-                    </div>
-
                     <InterpretButton
                         member={member}
+                        memberKey={memberKey}
+                        section="chinese"
+                        period="general"
                         system="Chinese Astrology"
                         title="Interpretación Astrología China"
-                        prompt={`Eres un maestro de astrología china. Interpreta en profundidad el perfil de ${member.name}: Animal: ${member.chinese.animal}, Elemento: ${member.chinese.element}, Signo completo: ${member.chinese.fullSign}. Explica qué significa su animal y elemento para su personalidad, compatibilidades, fortalezas y desafíos. Analiza cómo le afecta el 2026 (Año del Caballo de Fuego) según su signo. Responde en español con profundidad y usa emojis para hacer la lectura visual y atractiva.`}
+                        prompt={`Eres un maestro de astrología china. Interpreta en profundidad el perfil de ${member.name}: Animal: ${member.chinese.animal}, Elemento: ${member.chinese.element}, Signo completo: ${member.chinese.fullSign}. Explica qué significa su animal y elemento para su personalidad, compatibilidades, fortalezas y desafíos. Analiza cómo le afecta el 2026 (Año del Caballo de Fuego) según su signo. Responde en español con profundidad.`}
                     />
+
+                    <div className="cosmic-card p-6 border-t border-yellow-600/30 pt-6 mt-6">
+                        <h4 className="text-xl font-bold gradient-text mb-6">Tránsitos Chinos</h4>
+                        <TransitsTab member={member} memberKey={memberKey} />
+                    </div>
                 </div>
             );
         }
 
         // ==================== ESOTERIC TAB ====================
-        function EsotericSystems({ member }) {
+        function EsotericSystems({ member, memberKey }) {
             return (
-                <div className="space-y-4">
-                    <div className="cosmic-card p-6">
-                        <h4 className="text-lg font-bold gradient-text mb-2">Tarot Archetypes</h4>
-                        <p className="text-white font-semibold">{member.tarot}</p>
-                    </div>
-
-                    <div className="cosmic-card p-6">
-                        <h4 className="text-lg font-bold gradient-text mb-2">I Ching</h4>
-                        <p className="text-white font-semibold">Hexagram {member.iChing.hex}: {member.iChing.name}</p>
-                        <p className="text-yellow-400 text-sm">{member.iChing.meaning}</p>
-                    </div>
-
-                    {member.humanDesign !== '—' && (
+                <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="cosmic-card p-6">
-                            <h4 className="text-lg font-bold gradient-text mb-2">Human Design</h4>
-                            <p className="text-white font-semibold">{member.humanDesign}</p>
+                            <h4 className="text-lg font-bold gradient-text mb-2">Tarot Archetypes</h4>
+                            <p className="text-white font-semibold">{member.tarot}</p>
                         </div>
-                    )}
 
-                    <div className="cosmic-card p-6">
-                        <h4 className="text-lg font-bold gradient-text mb-2">Enneagram Type</h4>
-                        <p className="text-white font-semibold">{member.enneagram}</p>
-                    </div>
-
-                    {member.mayan !== '—' && (
                         <div className="cosmic-card p-6">
-                            <h4 className="text-lg font-bold gradient-text mb-2">Mayan Tzolkin</h4>
-                            <p className="text-white font-semibold">{member.mayan}</p>
+                            <h4 className="text-lg font-bold gradient-text mb-2">I Ching</h4>
+                            <p className="text-white font-semibold">Hexagram {member.iChing.hex}: {member.iChing.name}</p>
+                            <p className="text-yellow-400 text-sm">{member.iChing.meaning}</p>
                         </div>
-                    )}
+
+                        {member.humanDesign !== '—' && (
+                            <div className="cosmic-card p-6">
+                                <h4 className="text-lg font-bold gradient-text mb-2">Human Design</h4>
+                                <p className="text-white font-semibold">{member.humanDesign}</p>
+                            </div>
+                        )}
+
+                        <div className="cosmic-card p-6">
+                            <h4 className="text-lg font-bold gradient-text mb-2">Enneagram Type</h4>
+                            <p className="text-white font-semibold">{member.enneagram}</p>
+                        </div>
+                    </div>
 
                     <InterpretButton
                         member={member}
+                        memberKey={memberKey}
+                        section="esoteric"
+                        period="general"
                         system="Esoteric Systems"
                         title="Interpretación Esotérica Integral"
-                        prompt={`Eres un experto en sistemas esotéricos. Interpreta el perfil esotérico completo de ${member.name}: Tarot: ${member.tarot}, I Ching: Hexagrama ${member.iChing.hex} - ${member.iChing.name} (${member.iChing.meaning}), Human Design: ${member.humanDesign}, Enneagram: ${member.enneagram}, Mayan Tzolkin: ${member.mayan}. Explica cómo estos sistemas se interconectan para revelar el propósito de vida, desafíos kármicos y potencial espiritual de esta persona. Responde en español con profundidad mística y usa emojis para hacer la lectura visual.`}
+                        prompt={`Eres un experto en sistemas esotéricos. Interpreta el perfil esotérico completo de ${member.name}: Tarot: ${member.tarot}, I Ching: Hexagrama ${member.iChing.hex} - ${member.iChing.name} (${member.iChing.meaning}), Human Design: ${member.humanDesign}, Enneagram: ${member.enneagram}. Explica cómo estos sistemas se interconectan para revelar el propósito de vida, desafíos kármicos y potencial espiritual de esta persona. Responde en español con profundidad mística.`}
                     />
-                </div>
-            );
-        }
 
-        // ==================== TRANSITS TAB (MULTI-TIMEFRAME) ====================
-        function TransitsTab({ member }) {
-            const [period, setPeriod] = useState('hoy');
-            const [reading, setReading] = useState({});
-            const [loadingPeriod, setLoadingPeriod] = useState('');
-
-            // Helper function to generate seeded pseudo-random data
-            function seededRandom(seed) {
-                const x = Math.sin(seed) * 10000;
-                return x - Math.floor(x);
-            }
-
-            // Generate chart data based on selected period
-            function getChartDataForPeriod(p) {
-                const hash = (str) => {
-                    let h = 0;
-                    for (let i = 0; i < str.length; i++) h = ((h << 5) - h) + str.charCodeAt(i);
-                    return h;
-                };
-                const baseSeed = hash(member.name + p);
-
-                if (p === 'hoy') {
-                    // 24-hour energy curve for today
-                    const hours = [];
-                    for (let i = 0; i < 24; i++) {
-                        const baseEnergy = 5 + 2 * Math.sin((i - 6) * Math.PI / 12);
-                        const randomFactor = seededRandom(baseSeed + i) * 1.5;
-                        hours.push({ hour: `${i}:00`, energy: Math.max(1, Math.min(10, baseEnergy + randomFactor)) });
-                    }
-                    return hours;
-                } else if (p === 'semana') {
-                    // 7-day energy curve
-                    const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-                    return days.map((day, i) => ({
-                        day,
-                        energy: Math.max(2, Math.min(10, 5 + seededRandom(baseSeed + i) * 4))
-                    }));
-                } else if (p === 'mes') {
-                    // 4-week energy curve
-                    return ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'].map((week, i) => ({
-                        week,
-                        energy: Math.max(2, Math.min(10, 5 + seededRandom(baseSeed + i) * 4))
-                    }));
-                } else if (p === 'ano') {
-                    // Monthly data for 2026 (existing)
-                    return member.monthlyEnergy2026.map((val, i) => ({
-                        month: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][i],
-                        energy: val
-                    }));
-                } else if (p === '3anos') {
-                    // Yearly data for 2026-2028
-                    return [
-                        { year: '2026', energy: 6 + seededRandom(baseSeed) * 3 },
-                        { year: '2027', energy: 5 + seededRandom(baseSeed + 1) * 3 },
-                        { year: '2028', energy: 7 + seededRandom(baseSeed + 2) * 3 }
-                    ];
-                } else if (p === '5anos') {
-                    // Yearly data for 2026-2030
-                    return Array.from({ length: 5 }, (_, i) => ({
-                        year: String(2026 + i),
-                        energy: 5 + seededRandom(baseSeed + i) * 4
-                    }));
-                } else if (p === 'decada') {
-                    // Yearly data for 2026-2036
-                    return Array.from({ length: 11 }, (_, i) => ({
-                        year: String(2026 + i),
-                        energy: 5 + seededRandom(baseSeed + i) * 4
-                    }));
-                }
-            }
-
-            const chartData = getChartDataForPeriod(period);
-
-            const periods = [
-                { id: 'hoy', label: 'Hoy', icon: '☀️' },
-                { id: 'semana', label: 'Semana', icon: '📅' },
-                { id: 'mes', label: 'Mes', icon: '🌙' },
-                { id: 'ano', label: '2026', icon: '⭐' },
-                { id: '3anos', label: '3 Años', icon: '🔮' },
-                { id: '5anos', label: '5 Años', icon: '🌌' },
-                { id: 'decada', label: 'Década', icon: '♾️' }
-            ];
-
-            const periodDescriptions = {
-                hoy: `Hoy es ${new Date().toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}. Dame la lectura astrológica de HOY para ${member.name}. Incluye: energía del día, qué hacer y qué evitar, consejo cósmico. Sé específico con las posiciones planetarias actuales.`,
-                semana: `Dame la lectura astrológica de ESTA SEMANA (${new Date().toLocaleDateString('es-MX')}) para ${member.name}. Incluye: tema semanal, mejores días, desafíos, oportunidades, consejo.`,
-                mes: `Dame la lectura astrológica de ESTE MES (${new Date().toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}) para ${member.name}. Incluye: tema mensual, fases lunares relevantes, áreas de vida destacadas, consejo.`,
-                ano: `Dame la lectura astrológica ANUAL 2026 para ${member.name}. Año personal numerológico: ${member.numerology.personalYear2026}. Incluye: tema del año, trimestres, momentos clave, áreas de crecimiento, advertencias, oportunidades.`,
-                '3anos': `Dame la lectura astrológica de los PRÓXIMOS 3 AÑOS (2026-2028) para ${member.name}. Incluye: ciclos planetarios mayores, evolución personal, hitos probables, temas por año.`,
-                '5anos': `Dame la lectura astrológica de los PRÓXIMOS 5 AÑOS (2026-2030) para ${member.name}. Incluye: tránsitos de Saturno, Júpiter y planetas exteriores, transformaciones profundas, ciclos de vida.`,
-                decada: `Dame la lectura astrológica de la PRÓXIMA DÉCADA (2026-2036) para ${member.name}. Incluye: grandes ciclos planetarios (retorno de Saturno si aplica, tránsitos de Plutón/Neptuno/Urano), evolución del alma, destino cósmico.`
-            };
-
-            async function getReading(p) {
-                setLoadingPeriod(p);
-                try {
-                    const planets = Object.entries(member.western).map(([pl, pos]) => `${pl}: ${pos.sign} ${pos.degree}`).join(', ');
-                    const transitPrompt = `Eres un astrólogo místico experto. ${periodDescriptions[p]}
-
-Datos natales: ${member.name}, nacido ${member.born} en ${member.birthPlace}
-Posiciones: ${planets}
-Signo chino: ${member.chinese.fullSign}, Enneagram: ${member.enneagram}, Life Path: ${member.numerology.lifePath}
-Tarot: ${member.tarot}, I Ching: Hex ${member.iChing.hex} ${member.iChing.name}
-
-Escribe en español, con lenguaje poético pero accesible. Usa secciones con títulos claros. Máximo 1000 palabras.`;
-                    const resp = await fetch('/api/interpret', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ prompt: transitPrompt, max_tokens: 2000 })
-                    });
-                    const data = await resp.json();
-                    setReading(prev => ({ ...prev, [p]: data.error ? ('Error: ' + data.error) : (data.content?.[0]?.text || 'Error') }));
-                } catch(e) { setReading(prev => ({ ...prev, [p]: 'Error: ' + e.message })); }
-                setLoadingPeriod('');
-            }
-
-            return (
-                <div className="space-y-6">
-                    <div className="cosmic-card p-6">
-                        <h4 className="text-xl font-bold gradient-text mb-4">Pronóstico Energético {period === 'hoy' ? 'de Hoy' : period === 'semana' ? 'de la Semana' : period === 'mes' ? 'del Mes' : period === 'ano' ? '2026' : period === '3anos' ? '2026-2028' : period === '5anos' ? '2026-2030' : '2026-2036'}</h4>
-                        <ResponsiveContainer key={'transit-chart-' + period} width="100%" height={300}>
-                            <AreaChart data={chartData}>
-                                <defs>
-                                    <linearGradient id="tGrad" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#f0d78c" stopOpacity={1}/>
-                                        <stop offset="30%" stopColor="#d4a574" stopOpacity={0.6}/>
-                                        <stop offset="95%" stopColor="#c084fc" stopOpacity={0.05}/>
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,165,116,0.2)" />
-                                <XAxis dataKey={period === 'hoy' ? 'hour' : period === 'semana' ? 'day' : period === 'mes' ? 'week' : (period === 'ano' ? 'month' : 'year')} stroke="#808080" style={{ fontSize: '12px' }} />
-                                <YAxis stroke="#808080" domain={[0,10]} />
-                                <Tooltip contentStyle={{ background: '#1a0a2e', border: '2px solid #d4a574', borderRadius: '8px', boxShadow: '0 0 15px rgba(212,165,116,0.3)' }} cursor={{ fill: 'rgba(212,165,116,0.1)' }} />
-                                <Area type="monotone" dataKey="energy" stroke="#f0d78c" strokeWidth={3} fillOpacity={1} fill="url(#tGrad)" dot={{ fill: '#f0d78c', r: 4 }} activeDot={{ r: 6, fill: '#d4a574' }} isAnimationActive={true} />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                    </div>
-
-                    <div className="cosmic-card p-6">
-                        <h4 className="text-xl font-bold gradient-text mb-6">🔮 Tránsitos e Interpretaciones</h4>
-                        <div className="flex flex-wrap gap-2 mb-6">
-                            {periods.map(p => (
-                                <button key={p.id} onClick={() => { setPeriod(p.id); if (!reading[p.id]) getReading(p.id); }}
-                                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${period === p.id ? 'bg-gradient-to-r from-yellow-600/50 to-yellow-500/30 text-yellow-300 border border-yellow-400/50' : 'bg-black/30 text-gray-400 border border-yellow-600/20 hover:text-yellow-300'}`}>
-                                    {p.icon} {p.label}
-                                </button>
-                            ))}
-                        </div>
-
-                        {loadingPeriod === period && (
-                            <div className="flex flex-col items-center gap-3 py-8">
-                                <div className="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
-                                <p className="text-yellow-400 italic">El Oráculo consulta los tránsitos de {periods.find(p => p.id === period)?.label}...</p>
-                            </div>
-                        )}
-
-                        {reading[period] && loadingPeriod !== period && (
-                            <div className="prose prose-invert max-w-none bg-black/20 rounded-lg p-6 border border-yellow-600/20" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }}>
-                                <p className="text-gray-300">{reading[period]}</p>
-                            </div>
-                        )}
-
-                        {!reading[period] && loadingPeriod !== period && (
-                            <div className="text-center py-8">
-                                <button onClick={() => getReading(period)} className="px-8 py-3 rounded-lg font-bold transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #d4a574, #f0d78c)', color: '#1a0a2e' }}>
-                                    ✨ Consultar {periods.find(p => p.id === period)?.label} ✨
-                                </button>
-                            </div>
-                        )}
+                    <div className="cosmic-card p-6 border-t border-yellow-600/30 pt-6 mt-6">
+                        <h4 className="text-xl font-bold gradient-text mb-6">Tránsitos Esotéricos</h4>
+                        <TransitsTab member={member} memberKey={memberKey} />
                     </div>
                 </div>
             );
@@ -1279,16 +1293,15 @@ Pregunta del consultante: ${question}`;
         // ==================== PERSON CONTAINER ====================
         function PersonContainer({ personKey }) {
             const member = familyMembers[personKey];
-            const [activeTab, setActiveTab] = useState('overview');
+            const [activeTab, setActiveTab] = useState('perfil');
 
             const tabs = [
-                { id: 'overview', label: 'Overview', component: PersonOverview },
-                { id: 'western', label: 'Western Astrology', component: WesternAstrology },
+                { id: 'perfil', label: 'Perfil', component: PerfilTab },
+                { id: 'natal', label: 'Natal Chart', component: NatalChartTab },
                 { id: 'vedic', label: 'Vedic', component: VedicAstrology },
                 { id: 'numerology', label: 'Numerology', component: NumerologyTab },
                 { id: 'chinese', label: 'Chinese', component: ChineseAstrology },
                 { id: 'esoteric', label: 'Esoteric', component: EsotericSystems },
-                { id: 'transits', label: '2026 Transits', component: TransitsTab },
                 { id: 'oracle', label: 'AI Oracle', component: AIOracle }
             ];
 
@@ -1308,7 +1321,7 @@ Pregunta del consultante: ${question}`;
 
                     <div className="tab-content">
                         {tabs.find(t => t.id === activeTab)?.component &&
-                            React.createElement(tabs.find(t => t.id === activeTab).component, { member, key: personKey })
+                            React.createElement(tabs.find(t => t.id === activeTab).component, { member, memberKey: personKey })
                         }
                     </div>
                 </div>
@@ -1325,20 +1338,17 @@ Pregunta del consultante: ${question}`;
 
             const MEMBER_COLORS = ['#d4a574', '#74c0fc', '#ff6b6b', '#51cf66', '#c084fc', '#06b6d4', '#f59e0b'];
 
-            // Element distribution
             const elements = { Fire: 0, Earth: 0, Air: 0, Water: 0, Wood: 0 };
             members.forEach(m => { if (m.chinese.element && elements[m.chinese.element] !== undefined) elements[m.chinese.element]++; });
             const elementData = Object.entries(elements).filter(([,v]) => v > 0).map(([name, value]) => ({ name, value }));
             const ELEM_COLORS = { Fire: '#ff6b6b', Earth: '#51cf66', Air: '#74c0fc', Water: '#06b6d4', Wood: '#22c55e' };
 
-            // Numerology comparison data
             const numCompareData = ['lifePath', 'expression', 'soulUrge', 'personality', 'maturity'].map(key => {
                 const row = { name: key === 'lifePath' ? 'Life Path' : key === 'soulUrge' ? 'Soul Urge' : key.charAt(0).toUpperCase() + key.slice(1) };
                 members.forEach(m => { row[m.name.split(' ')[0]] = typeof m.numerology[key] === 'number' ? m.numerology[key] : 0; });
                 return row;
             });
 
-            // Monthly energy comparison
             const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
             const energyData = months.map((m, i) => {
                 const row = { name: m };
@@ -1346,7 +1356,6 @@ Pregunta del consultante: ${question}`;
                 return row;
             });
 
-            // Sun sign distribution
             const sunSigns = {};
             members.forEach(m => { const s = m.western.sun.sign; if (s && s !== '—') sunSigns[s] = (sunSigns[s] || 0) + 1; });
             const sunSignData = Object.entries(sunSigns).map(([name, value]) => ({ name, value }));
@@ -1461,7 +1470,7 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                                     <RadarChart data={[
                                         { dimension: 'Intelecto', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.numerology.expression || 5) * 1.2)), 0) / members.length },
                                         { dimension: 'Emoción', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.western.moon.sign === 'Cancer' ? 8 : m.western.moon.sign === 'Pisces' ? 8 : m.western.moon.sign === 'Scorpio' ? 7 : 5))), 0) / members.length },
-                                        { dimension: 'Acción', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.western.mars.sign === 'Aries' ? 9 : m.western.mars.sign === 'Cancer' ? 5 : m.western.mars.sign === 'Leo' ? 8 : 6))), 0) / members.length },
+                                        { dimension: 'Acción', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.western.mars?.sign === 'Aries' ? 9 : m.western.mars?.sign === 'Cancer' ? 5 : m.western.mars?.sign === 'Leo' ? 8 : 6))), 0) / members.length },
                                         { dimension: 'Espiritualidad', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.chinese.element === 'Water' ? 8 : m.chinese.element === 'Fire' ? 6 : m.chinese.element === 'Wood' ? 7 : 5))), 0) / members.length },
                                         { dimension: 'Creatividad', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.tarot.includes('Empress') ? 9 : m.tarot.includes('Magician') ? 8 : 6))), 0) / members.length },
                                         { dimension: 'Liderazgo', value: members.reduce((sum, m) => sum + Math.max(1, Math.min(10, (m.numerology.lifePath <= 3 ? 8 : m.numerology.lifePath <= 6 ? 6 : 5))), 0) / members.length }
@@ -1474,26 +1483,6 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                                     </RadarChart>
                                 </ResponsiveContainer>
                                 <p className="text-center text-gray-400 text-sm mt-4 italic">Promedio de fortalezas cósmicas de la constelación familiar</p>
-                            </div>
-
-                            <div className="cosmic-card p-6">
-                                <h4 className="text-xl font-bold gradient-text mb-4">🔮 Interpretación Conjunta de la Constelación Familiar</h4>
-                                {!familyReading && !isLoadingReading && (
-                                    <button onClick={getFamilyReading} className="w-full px-6 py-3 rounded-lg font-bold transition-all hover:scale-105" style={{ background: 'linear-gradient(135deg, #d4a574, #f0d78c)', color: '#1a0a2e' }}>
-                                        ✨ Generar Interpretación Cósmica ✨
-                                    </button>
-                                )}
-                                {isLoadingReading && (
-                                    <div className="flex flex-col items-center gap-3 py-6">
-                                        <div className="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
-                                        <p className="text-yellow-400 italic">El Oráculo analiza la compatibilidad cósmica...</p>
-                                    </div>
-                                )}
-                                {familyReading && (
-                                    <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.8' }} className="bg-black/20 rounded-lg p-6 border border-yellow-600/20 mt-4">
-                                        <p className="text-gray-300">{familyReading}</p>
-                                    </div>
-                                )}
                             </div>
 
                             <div className="cosmic-card p-6">
@@ -1842,7 +1831,6 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
             const [displayName, setDisplayName] = useState('');
             const [authChecking, setAuthChecking] = useState(true);
 
-            // Check for existing session on mount
             useEffect(() => {
                 async function checkSession() {
                     const token = sessionStorage.getItem('oracle_token');
@@ -1866,7 +1854,6 @@ Hazlo visualmente atractivo con emojis y secciones claras. Máximo 1500 palabras
                             sessionStorage.removeItem('oracle_user');
                         }
                     } catch (e) {
-                        // Token invalid, clear it
                         sessionStorage.removeItem('oracle_token');
                         sessionStorage.removeItem('oracle_user');
                     }
