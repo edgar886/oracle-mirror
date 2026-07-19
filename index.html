@@ -262,7 +262,12 @@
             return sessionStorage.getItem('oracle_token') || '';
         }
 
+        function isErrorReading(text) {
+            return typeof text === 'string' && /^(Error|No se pudo)/i.test(text.trim());
+        }
+
         function saveReading(memberKey, section, period, text) {
+            if (isErrorReading(text)) return;
             const key = `oracle_${memberKey}_${section}_${period}`;
             localStorage.setItem(key, JSON.stringify({ text, timestamp: Date.now() }));
             const token = getAuthToken();
@@ -278,7 +283,13 @@
         function loadReading(memberKey, section, period) {
             const key = `oracle_${memberKey}_${section}_${period}`;
             const data = localStorage.getItem(key);
-            return data ? JSON.parse(data) : null;
+            if (!data) return null;
+            const parsed = JSON.parse(data);
+            if (parsed && isErrorReading(parsed.text)) {
+                localStorage.removeItem(key);
+                return null;
+            }
+            return parsed;
         }
 
         function clearReading(memberKey, section, period) {
@@ -303,6 +314,7 @@
                 const { readings } = await res.json();
                 if (!readings) return;
                 Object.entries(readings).forEach(([key, serverData]) => {
+                    if (!serverData || isErrorReading(serverData.text)) return;
                     const localRaw = localStorage.getItem(key);
                     if (!localRaw) {
                         localStorage.setItem(key, JSON.stringify(serverData));
