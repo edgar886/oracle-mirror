@@ -1198,8 +1198,8 @@ Usa un tono místico pero claro. Máximo 800 palabras.`}
 
             const periodDescriptions = {
                 hoy: `Hoy es ${new Date().toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}. Dame la lectura astrológica de HOY para ${member.name}. Incluye: energía del día, qué hacer y qué evitar, consejo cósmico. Sé específico con las posiciones planetarias actuales.`,
-                semana: `Dame la lectura astrológica de ESTA SEMANA (${new Date().toLocaleDateString('es-MX')}) para ${member.name}. Incluye: tema semanal, mejores días, desafíos, oportunidades, consejo.`,
-                mes: `Dame la lectura astrológica de ESTE MES (${new Date().toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}) para ${member.name}. Incluye: tema mensual, fases lunares relevantes, áreas de vida destacadas, consejo.`,
+                semana: `Dame la lectura astrológica de LOS PRÓXIMOS 7 DÍAS (de hoy ${new Date().toLocaleDateString('es-MX')} a ${new Date(Date.now()+7*864e5).toLocaleDateString('es-MX')}) para ${member.name}. Incluye: tema semanal, mejores días, desafíos, oportunidades, consejo.`,
+                mes: `Dame la lectura astrológica de LOS PRÓXIMOS 30 DÍAS (de hoy ${new Date().toLocaleDateString('es-MX')} a ${new Date(Date.now()+30*864e5).toLocaleDateString('es-MX')}) para ${member.name}. Incluye: tema mensual, fases lunares relevantes, áreas de vida destacadas, consejo.`,
                 ano: `Dame la lectura astrológica ANUAL 2026 para ${member.name}. Año personal numerológico: ${member.numerology.personalYear2026}. Incluye: tema del año, trimestres, momentos clave, áreas de crecimiento, advertencias, oportunidades.`,
                 '3anos': `Dame la lectura astrológica de los PRÓXIMOS 3 AÑOS (2026-2028) para ${member.name}. Incluye: ciclos planetarios mayores, evolución personal, hitos probables, temas por año.`,
                 '5anos': `Dame la lectura astrológica de los PRÓXIMOS 5 AÑOS (2026-2030) para ${member.name}. Incluye: tránsitos de Saturno, Júpiter y planetas exteriores, transformaciones profundas, ciclos de vida.`,
@@ -1520,8 +1520,8 @@ Escribe en español. Explica qué significa cada elemento para su vida, personal
                     const planets = Object.entries(member.western).map(([pl, pos]) => `${pl}: ${pos.sign} ${pos.degree}`).join(', ');
                     const periodLabels = {
                         hoy: `HOY (${new Date().toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })})`,
-                        semana: `ESTA SEMANA (semana del ${new Date().toLocaleDateString('es-MX')})`,
-                        mes: `ESTE MES (${new Date().toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })})`,
+                        semana: `LOS PRÓXIMOS 7 DÍAS (de hoy ${new Date().toLocaleDateString('es-MX')} a ${new Date(Date.now()+7*864e5).toLocaleDateString('es-MX')})`,
+                        mes: `LOS PRÓXIMOS 30 DÍAS (de hoy ${new Date().toLocaleDateString('es-MX')} a ${new Date(Date.now()+30*864e5).toLocaleDateString('es-MX')})`,
                         ano: 'EL AÑO 2026',
                         '3anos': 'LOS PRÓXIMOS 3 AÑOS (2026-2028)',
                         '5anos': 'LOS PRÓXIMOS 5 AÑOS (2026-2030)',
@@ -1965,8 +1965,8 @@ Pregunta del consultante: ${question}`;
 
                     const periodLabels = {
                         hoy: 'HOY ' + new Date().toLocaleDateString('es-MX'),
-                        semana: 'ESTA SEMANA (pr\u00f3ximos 7 d\u00edas)',
-                        mes: 'ESTE MES (' + new Date().toLocaleString('es-MX', { month: 'long', year: 'numeric' }) + ')',
+                        semana: `LOS PRÓXIMOS 7 DÍAS (de hoy ${new Date().toLocaleDateString('es-MX')} a ${new Date(Date.now()+7*864e5).toLocaleDateString('es-MX')})`,
+                        mes: `LOS PRÓXIMOS 30 DÍAS (de hoy ${new Date().toLocaleDateString('es-MX')} a ${new Date(Date.now()+30*864e5).toLocaleDateString('es-MX')})`,
                         ano: 'A\u00d1O 2026 COMPLETO',
                         '3anos': 'PR\u00d3XIMOS 3 A\u00d1OS (2026-2029)',
                         '5anos': 'PR\u00d3XIMOS 5 A\u00d1OS (2026-2031)',
